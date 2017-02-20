@@ -42,20 +42,21 @@ public class RegisterFragment extends Fragment {
         verifyPermissions(getActivity());
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            File photo = null;
-            try {
-                photo = File.createTempFile("IMAGE",".jpg");
-            }
-            catch(IOException i){
-                i.printStackTrace();
-            }
-            if(photo!=null) {
-                Uri photoUri = FileProvider.getUriForFile(getActivity(), "com.example.android.fileprovider", photo);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, 1);
-            }
-        }
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null)
+            startActivityForResult(takePictureIntent, 1);
+//            File photo = null;
+//            try {
+//                photo = File.createTempFile("IMAGE",".jpg");
+//            }
+//            catch(IOException i){
+//                i.printStackTrace();
+//            }
+//            if(photo!=null) {
+//                Uri photoUri = FileProvider.getUriForFile(getActivity(), "com.example.android.fileprovider", photo);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+//                startActivityForResult(takePictureIntent, 1);
+//            }
+//        }
 
 
         return v;

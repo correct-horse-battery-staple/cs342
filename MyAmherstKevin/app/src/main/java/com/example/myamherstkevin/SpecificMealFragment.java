@@ -27,6 +27,8 @@ import java.util.Date;
 
 public class SpecificMealFragment extends Fragment {
 
+    private String dump;
+
     public SpecificMealFragment() {
         // Required empty public constructor
     }
@@ -48,18 +50,21 @@ public class SpecificMealFragment extends Fragment {
 
         new screp().execute(meal);
 
-        ArrayList<Menu> items = FileUtil.readFromFile(getActivity());
-        ArrayList<Menu> listItems = new ArrayList<>();
-        for(Menu m:items){
-            if(m.getType().equals(meal)){
-                listItems.add(m);
-            }
-        }
+//        ArrayList<Menu> items = FileUtil.readFromFile(getActivity());
+//        ArrayList<Menu> listItems = new ArrayList<>();
+//        for(Menu m:items){
+//            if(m.getType().equals(meal)){
+//                listItems.add(m);
+//            }
+//        }
+//
+//        SpecificMealArrayAdapter adapter = new SpecificMealArrayAdapter(getActivity(), listItems);
+//        listview.setAdapter(adapter);
+//        TextView textview = (TextView)v.findViewById(R.id.specificmeal_type);
+//        textview.setText(meal);
 
-        SpecificMealArrayAdapter adapter = new SpecificMealArrayAdapter(getActivity(), listItems);
-        listview.setAdapter(adapter);
-        TextView textview = (TextView)v.findViewById(R.id.specificmeal_type);
-        textview.setText(meal);
+        TextView textview2 = (TextView)v.findViewById(R.id.GARBAGE);
+        textview2.setText(dump);
         return v;
         //return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -75,7 +80,6 @@ public class SpecificMealFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... s){
-            String pre = "";
             try {
                 Calendar c = Calendar.getInstance(); //year-month-day
                 Date d = c.getTime();
@@ -83,13 +87,13 @@ public class SpecificMealFragment extends Fragment {
                 MenuFileUtil m = new MenuFileUtil();
                 verifyPermissions(getActivity());
                 m.readFromFile(date,s[0]);
-                pre = m.getData();
+                Log.d("Trash",m.getData());
+                dump = m.getData();
             }
             catch(IOException i){
                 i.printStackTrace();
             }
 
-            Log.d("garbage",pre);
             return null;
         }
 

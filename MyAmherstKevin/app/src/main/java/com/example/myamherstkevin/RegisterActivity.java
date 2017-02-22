@@ -90,35 +90,33 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void register(View view){
-        TextView errorMessage = (TextView)findViewById(R.id.register_error_text);
+    public void register(View view) {
+        TextView errorMessage = (TextView) findViewById(R.id.register_error_text);
 
         String user = getUserI();
         String pass = getPassI();
-        if(user.contains(" ")||pass.contains(" ")){
+        if (user.contains(" ") || pass.contains(" ")) {
             errorMessage.setText(invalidError);
-        }
-        else {
+        } else {
             try {
                 File file = getFileStreamPath("userpass.txt");
-                if(!file.exists()){
+                if (!file.exists()) {
                     file.createNewFile();
                 }
                 OutputStreamWriter output = new OutputStreamWriter(this.openFileOutput(file.getName(), Context.MODE_APPEND));
-                Log.d("outputstream",this.openFileOutput("userpass.txt",Context.MODE_APPEND).toString());
-                output.append("\n"+user+" "+pass);
+                Log.d("outputstream", this.openFileOutput("userpass.txt", Context.MODE_APPEND).toString());
+                output.append("\n" + user + " " + pass);
                 //Toast.makeText(this,user+" "+pass,Toast.LENGTH_SHORT).show();
                 output.flush();
                 output.close();
-            }
-            catch (IOException i){
+            } catch (IOException i) {
                 i.printStackTrace();
             }
         }
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.activity_register);
-        if(fragment == null){
+        if (fragment == null) {
             fragment = new RegisterFragment();
             fm.beginTransaction().add(R.id.activity_register, fragment).commit();
         }
@@ -134,6 +132,11 @@ public class RegisterActivity extends AppCompatActivity {
         EditText password = (EditText)findViewById(R.id.password);
         String pass = password.getText().toString();
         return pass;
+    }
+
+    public void maps(View view){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 
 }

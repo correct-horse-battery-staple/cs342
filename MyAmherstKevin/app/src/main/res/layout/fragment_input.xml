@@ -12,14 +12,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Latitude"
+        android:hint="Latitude"
         android:inputType="numberDecimal"
         android:id="@+id/latitude"/>
     <EditText
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Longitude"
+        android:hint="Longitude"
         android:inputType="numberDecimal"
         android:id="@+id/longitude"
         />
@@ -27,5 +27,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:onClick=""/>
+        android:onClick="newMarker"/>
 </LinearLayout>

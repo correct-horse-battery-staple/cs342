@@ -27,8 +27,6 @@ import java.util.Date;
 
 public class SpecificMealFragment extends Fragment {
 
-    private String dump;
-
     public SpecificMealFragment() {
         // Required empty public constructor
     }
@@ -48,7 +46,7 @@ public class SpecificMealFragment extends Fragment {
         String meal = getArguments().getString("Meal");
         Toast.makeText(getActivity(),meal,Toast.LENGTH_SHORT).show();
 
-        new screp().execute(meal);
+        new Screp().execute(meal);
 
 //        ArrayList<Menu> items = FileUtil.readFromFile(getActivity());
 //        ArrayList<Menu> listItems = new ArrayList<>();
@@ -63,8 +61,6 @@ public class SpecificMealFragment extends Fragment {
 //        TextView textview = (TextView)v.findViewById(R.id.specificmeal_type);
 //        textview.setText(meal);
 
-        TextView textview2 = (TextView)v.findViewById(R.id.GARBAGE);
-        textview2.setText(dump);
         return v;
         //return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -72,10 +68,12 @@ public class SpecificMealFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    class screp extends AsyncTask<String, String, String> {
+    class Screp extends AsyncTask<String, String, String> {
+
+        MenuFileUtil m;
+
         @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
+        protected void onPreExecute(){ super.onPreExecute();
         }
 
         @Override
@@ -84,11 +82,9 @@ public class SpecificMealFragment extends Fragment {
                 Calendar c = Calendar.getInstance(); //year-month-day
                 Date d = c.getTime();
                 String date = d.getYear()+"-"+d.getMonth()+"-"+d.getDay();
-                MenuFileUtil m = new MenuFileUtil();
+                m = new MenuFileUtil();
                 verifyPermissions(getActivity());
                 m.readFromFile(date,s[0]);
-                Log.d("Trash",m.getData());
-                dump = m.getData();
             }
             catch(IOException i){
                 i.printStackTrace();
@@ -99,7 +95,10 @@ public class SpecificMealFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String s){
+            TextView textview2 = (TextView)getActivity().findViewById(R.id.GARBAGE);
+            textview2.setText(m.getData());
 
+            Log.d("Trash",m.getData());
         }
 
         public void verifyPermissions(Activity activity) {

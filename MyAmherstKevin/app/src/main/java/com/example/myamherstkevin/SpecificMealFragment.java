@@ -46,20 +46,21 @@ public class SpecificMealFragment extends Fragment {
         String meal = getArguments().getString("Meal");
         Toast.makeText(getActivity(),meal,Toast.LENGTH_SHORT).show();
 
-        new screp().execute(meal);
+        new Screp().execute(meal);
 
-        ArrayList<Menu> items = FileUtil.readFromFile(getActivity());
-        ArrayList<Menu> listItems = new ArrayList<>();
-        for(Menu m:items){
-            if(m.getType().equals(meal)){
-                listItems.add(m);
-            }
-        }
+//        ArrayList<Menu> items = FileUtil.readFromFile(getActivity());
+//        ArrayList<Menu> listItems = new ArrayList<>();
+//        for(Menu m:items){
+//            if(m.getType().equals(meal)){
+//                listItems.add(m);
+//            }
+//        }
+//
+//        SpecificMealArrayAdapter adapter = new SpecificMealArrayAdapter(getActivity(), listItems);
+//        listview.setAdapter(adapter);
+//        TextView textview = (TextView)v.findViewById(R.id.specificmeal_type);
+//        textview.setText(meal);
 
-        SpecificMealArrayAdapter adapter = new SpecificMealArrayAdapter(getActivity(), listItems);
-        listview.setAdapter(adapter);
-        TextView textview = (TextView)v.findViewById(R.id.specificmeal_type);
-        textview.setText(meal);
         return v;
         //return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -67,35 +68,37 @@ public class SpecificMealFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    class screp extends AsyncTask<String, String, String> {
+    class Screp extends AsyncTask<String, String, String> {
+
+        MenuFileUtil m;
+
         @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
+        protected void onPreExecute(){ super.onPreExecute();
         }
 
         @Override
         protected String doInBackground(String... s){
-            String pre = "";
             try {
                 Calendar c = Calendar.getInstance(); //year-month-day
                 Date d = c.getTime();
                 String date = d.getYear()+"-"+d.getMonth()+"-"+d.getDay();
-                MenuFileUtil m = new MenuFileUtil();
+                m = new MenuFileUtil();
                 verifyPermissions(getActivity());
                 m.readFromFile(date,s[0]);
-                pre = m.getData();
             }
             catch(IOException i){
                 i.printStackTrace();
             }
 
-            Log.d("garbage",pre);
             return null;
         }
 
         @Override
         protected void onPostExecute(String s){
+            TextView textview2 = (TextView)getActivity().findViewById(R.id.GARBAGE);
+            textview2.setText(m.getData());
 
+            Log.d("Trash",m.getData());
         }
 
         public void verifyPermissions(Activity activity) {

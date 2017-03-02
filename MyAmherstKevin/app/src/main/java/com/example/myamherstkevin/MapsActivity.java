@@ -1,7 +1,9 @@
 package com.example.myamherstkevin;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +28,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -77,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.zoomIn());
             Log.d("current location","Unsuccessful access of current location");
             Toast.makeText(this,"Unsuccessful access of current location",Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -119,11 +123,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current location: " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
                 mMap.moveCamera(CameraUpdateFactory.zoomIn());
+                navigate();
             }
         }
         catch (SecurityException s){
             s.printStackTrace();
         }
+    }
+
+    private void navigate(){
+        double latNum = marker.getPosition().latitude;
+        double lonNum = marker.getPosition().longitude;
+        String header = "https://maps.googleapis.com/maps/api/directions/";
+        String origin = "json?origin=";
+        String destination = "&destination=";
+        String key = "&key=AIzaSyDiURSUkHNFP1f3kk2ApYXLwmMD1gCP3Kk";
+
+        String params = origin+mLastLocation.getLatitude()+","+mLastLocation.getLongitude()+destination+latNum+","+lonNum+key;
+
+        Intent intent = LocationIntentService.newIntent(this);
+        String[] extras = {header,params};
+        intent.putExtra("url",extras);
+        startService(intent);
     }
 
     @Override

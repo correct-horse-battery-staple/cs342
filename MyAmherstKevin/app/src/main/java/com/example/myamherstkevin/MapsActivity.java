@@ -73,13 +73,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(mLastLocation!=null) {
             LatLng currentLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Marker at " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
-            mMap.moveCamera(CameraUpdateFactory.zoomIn());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,10));
         }
         else {
             mMap.addMarker(new MarkerOptions().position(SMUD).title("Marker at SMUD"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(SMUD));
-            mMap.moveCamera(CameraUpdateFactory.zoomIn());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SMUD,10));
             Log.d("current location","Unsuccessful access of current location");
             Toast.makeText(this,"Unsuccessful access of current location",Toast.LENGTH_SHORT).show();
         }
@@ -121,9 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mLastLocation != null) {
                 LatLng currentLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current location: " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude()));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
-                mMap.moveCamera(CameraUpdateFactory.zoomIn());
-                navigate();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,10));
             }
         }
         catch (SecurityException s){
@@ -131,9 +127,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void navigate(){
-        double latNum = marker.getPosition().latitude;
-        double lonNum = marker.getPosition().longitude;
+    public void navigate(View view){
+        double latNum;
+        double lonNum;
+        if(marker!=null) {
+            latNum = marker.getPosition().latitude;
+            lonNum = marker.getPosition().longitude;
+        }
+        else {
+            latNum = SMUD.latitude;
+            lonNum = SMUD.longitude;
+        }
         String header = "https://maps.googleapis.com/maps/api/directions/";
         String origin = "json?origin=";
         String destination = "&destination=";
@@ -145,6 +149,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String[] extras = {header,params};
         intent.putExtra("url",extras);
         startService(intent);
+
+        String polyline = intent.getStringExtra("polyline");
+        String polyline2 = LocationIntentService.getPolyline(this);
+        //Log.d("polyline",polyline);
+        Log.d("polyline",polyline2);
     }
 
     @Override

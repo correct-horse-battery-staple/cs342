@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ServiceCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,9 +34,11 @@ public class LocationIntentService extends IntentService {
     }
 
     public static Intent newIntent(Context c){ return new Intent(c, LocationIntentService.class).setAction(""); }
+    static String polyline;
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d("handle","Intent received");
         if (intent != null) {
 
             String[] targetURL = intent.getStringArrayExtra("url");
@@ -76,8 +79,12 @@ public class LocationIntentService extends IntentService {
                     response.append('\r');
                 }
                 rd.close();
-                Log.d("received",response.toString());
+                //Log.d("received",response.toString());
 
+                String JSON = response.toString();
+                int i = JSON.indexOf("polyline");
+                polyline = JSON.substring(i).replace(" ","").split(",")[0].split(":")[2].substring(1,-2);
+                intent.putExtra("polyline",polyline);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -87,5 +94,9 @@ public class LocationIntentService extends IntentService {
             }
 
         }
+    }
+
+    public static String getPolyline(Context context){
+        return polyline;
     }
 }

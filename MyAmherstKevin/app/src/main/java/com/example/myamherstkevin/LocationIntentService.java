@@ -2,6 +2,8 @@ package com.example.myamherstkevin;
 
 import android.*;
 import android.app.IntentService;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -33,7 +35,11 @@ public class LocationIntentService extends IntentService {
         super.onCreate();
     }
 
-    public static Intent newIntent(Context c){ return new Intent(c, LocationIntentService.class).setAction(""); }
+    public static Intent newIntent(Context c){
+        Intent intent = new Intent(c, LocationIntentService.class).setAction("Location");
+        //PendingIntent pi = PendingIntent.getService(c,0,intent,0);
+        return intent;
+    }
     static String polyline;
 
     @Override
@@ -83,8 +89,17 @@ public class LocationIntentService extends IntentService {
 
                 String JSON = response.toString();
                 int i = JSON.indexOf("polyline");
-                polyline = JSON.substring(i).replace(" ","").split(",")[0].split(":")[2].substring(1,-2);
-                intent.putExtra("polyline",polyline);
+                polyline = JSON.substring(i).replace(" ","").split(",")[0].split(":")[2];
+                polyline=polyline.substring(1,polyline.length()-3);
+                Log.d("polyline",polyline);
+
+                Intent newIntent = new Intent("Polyline");
+                newIntent.putExtra("polyline",polyline);
+                newIntent.setAction("polyline");
+                newIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                sendBroadcast(newIntent);
+                Log.d("polyline","broadcast sent "+newIntent.toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -94,9 +109,5 @@ public class LocationIntentService extends IntentService {
             }
 
         }
-    }
-
-    public static String getPolyline(Context context){
-        return polyline;
     }
 }

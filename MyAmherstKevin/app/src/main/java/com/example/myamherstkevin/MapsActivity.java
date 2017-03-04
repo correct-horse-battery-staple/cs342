@@ -86,11 +86,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(mLastLocation!=null) {
             LatLng currentLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Marker at " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,3));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,5));
         }
         else {
             mMap.addMarker(new MarkerOptions().position(SMUD).title("Marker at SMUD"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SMUD,3));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SMUD,5));
             Log.d("current location","Unsuccessful access of current location");
             Toast.makeText(this,"Unsuccessful access of current location",Toast.LENGTH_SHORT).show();
         }
@@ -105,8 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .addApi(LocationServices.API)
                     .build();
         }
-        if(mGoogleApiClient!=null)
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
@@ -134,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mLastLocation != null) {
                 LatLng currentLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current location: " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude()));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,3));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
             }
         }
         catch (SecurityException s){
@@ -198,9 +197,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             ArrayList<LatLng> coords = new ArrayList<>(trucks.size());
             LatLng prev = new LatLng(0, 0);
-            if(trucks.size()%2!=0)
+            boolean b = false;
+            if(trucks.size()%2!=0) {
                 Log.d("polyline display", polyline);
-            for (int i = 0; i < trucks.size(); i += 2) {
+                b = true;
+            }
+            for (int i = 0; i < trucks.size()-1; i += 2) {
                 double lat = 0;
                 double lon = 0;
                 for (int j = 0; j < 2; j++) {
@@ -211,7 +213,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 LatLng point = new LatLng(lat + prev.latitude, lon + prev.longitude);
                 prev = point;
-                //Log.d("polyline", point.toString());
+                if (b)
+                    Log.d("polyline", point.toString());
                 coords.add(point);
             }
             mMap.addPolyline(new PolylineOptions().addAll(coords));

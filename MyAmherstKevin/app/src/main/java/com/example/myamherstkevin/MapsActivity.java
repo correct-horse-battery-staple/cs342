@@ -172,47 +172,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startService(intent);
     }
 
-    public void addPolyline(String polyline){
-        Log.d("polyline","add polyline "+polyline);
-        List<Integer> trucks = new java.util.ArrayList<Integer>(2);
-        int truck = 0;
-        int carriage_q = 0;
-        for (int x = 0, xx = polyline.length(); x < xx; ++x) {
-            int i = polyline.charAt(x);
-            i -= 63;
-            int _5_bits = i << (32 - 5) >>> (32 - 5);
-            truck |= _5_bits << carriage_q;
-            carriage_q += 5;
-            boolean is_last = (i & (1 << 5)) == 0;
-            if (is_last) {
-                boolean is_negative = (truck & 1) == 1;
-                truck >>>= 1;
-                if (is_negative) {
-                    truck = ~truck;
+    public void addPolyline(ArrayList<String> polylines){
+        for(String polyline:polylines) {
+            Log.d("polyline", "add polyline " + polyline);
+            List<Integer> trucks = new ArrayList<>(2);
+            int truck = 0;
+            int carriage_q = 0;
+            for (int x = 0, xx = polyline.length(); x < xx; ++x) {
+                int i = polyline.charAt(x);
+                i -= 63;
+                int _5_bits = i << (32 - 5) >>> (32 - 5);
+                truck |= _5_bits << carriage_q;
+                carriage_q += 5;
+                boolean is_last = (i & (1 << 5)) == 0;
+                if (is_last) {
+                    boolean is_negative = (truck & 1) == 1;
+                    truck >>>= 1;
+                    if (is_negative) {
+                        truck = ~truck;
+                    }
+                    trucks.add(truck);
+                    carriage_q = 0;
+                    truck = 0;
                 }
-                trucks.add(truck);
-                carriage_q = 0;
-                truck = 0;
             }
-        }
-        ArrayList<LatLng> coords = new ArrayList<>(trucks.size());
-        LatLng prev = new LatLng(0,0);
-        for(int i = 0; i < trucks.size(); i+=2) {
-            double lat = 0;
-            double lon = 0;
-            for(int j = 0; j < 2; j++){
-                if(j==0)
-                    lat = trucks.get(i+j)/100000.0;
-                else
-                    lon = trucks.get(i+j)/100000.0;
+            ArrayList<LatLng> coords = new ArrayList<>(trucks.size());
+            LatLng prev = new LatLng(0, 0);
+            if(trucks.size()%2!=0)
+                Log.d("polyline display", polyline);
+            for (int i = 0; i < trucks.size(); i += 2) {
+                double lat = 0;
+                double lon = 0;
+                for (int j = 0; j < 2; j++) {
+                    if (j == 0)
+                        lat = trucks.get(i + j) / 100000.0;
+                    else
+                        lon = trucks.get(i + j) / 100000.0;
+                }
+                LatLng point = new LatLng(lat + prev.latitude, lon + prev.longitude);
+                prev = point;
+                //Log.d("polyline", point.toString());
+                coords.add(point);
             }
-            LatLng point = new LatLng(lat+prev.latitude,lon+prev.longitude);
-            prev = point;
-            Log.d("polyline", point.toString());
-            coords.add(point);
+            mMap.addPolyline(new PolylineOptions().addAll(coords));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), 3));
         }
-        mMap.addPolyline(new PolylineOptions().addAll(coords));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0),3));
     }
 
     @Override

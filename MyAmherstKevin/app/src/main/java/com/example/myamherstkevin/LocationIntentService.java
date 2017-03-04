@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class LocationIntentService extends IntentService {
 
@@ -89,21 +90,17 @@ public class LocationIntentService extends IntentService {
                 String JSON = response.toString();
 
                 Log.d("JSON",JSON);
-                int i = 0;
                 String polyline=JSON.replace(" ","");
-                String output = "";
+                ArrayList<String> output = new ArrayList<>(2);
+                int i = polyline.indexOf("polyline");
                 do {
-                    i = polyline.indexOf("polyline");
                     Log.d("polyline parse i",""+i);
                     polyline = polyline.substring(i+8);
                     Log.d("polyline parse 1",polyline);
-                    String polyline2 = polyline.split(",")[0];
-                    Log.d("polyline parse 2",polyline2);
-                    polyline2 = polyline2.split(":")[2];
-                    Log.d("polyline parse 3",polyline2);
-                    polyline2 = polyline2.substring(1, polyline2.length() - 3);
-                    Log.d("polyline", polyline2);
-                    output+=polyline2;
+                    String polyline2 = polyline.split("\"")[4];
+                    Log.d("polyline",polyline2);
+                    output.add(polyline2);
+                    i = polyline.indexOf("polyline");
                 }
                 while (i>0);
 

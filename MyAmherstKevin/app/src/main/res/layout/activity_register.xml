@@ -20,7 +20,8 @@
             android:layout_weight="1"
             android:id="@+id/username"
             android:inputType="text"
-            android:enabled="false"/>
+            android:enabled="true"
+        />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +40,8 @@
             android:id="@+id/password"
             android:inputType="textVisiblePassword"
             android:layout_weight="1"
-            android:enabled="false"/>
+            android:enabled="true"
+            />
 
     </LinearLayout>
 
@@ -49,7 +51,8 @@
         android:text="Login"
         android:onClick="login"
         android:layout_gravity="center_horizontal"
-        android:enabled="false"/>
+        android:enabled="true"
+        />
 
     <Button
         android:layout_width="wrap_content"
@@ -57,7 +60,8 @@
         android:text="Register"
         android:onClick="register"
         android:layout_gravity="center_horizontal"
-        android:enabled="false"/>
+        android:enabled="true"
+        />
 
     <Button
         android:layout_width="wrap_content"

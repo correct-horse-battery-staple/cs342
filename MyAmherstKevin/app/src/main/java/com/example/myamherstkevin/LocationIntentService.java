@@ -40,7 +40,6 @@ public class LocationIntentService extends IntentService {
         //PendingIntent pi = PendingIntent.getService(c,0,intent,0);
         return intent;
     }
-    static String polyline;
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -88,13 +87,28 @@ public class LocationIntentService extends IntentService {
                 //Log.d("received",response.toString());
 
                 String JSON = response.toString();
-                int i = JSON.indexOf("polyline");
-                polyline = JSON.substring(i).replace(" ","").split(",")[0].split(":")[2];
-                polyline=polyline.substring(1,polyline.length()-3);
-                Log.d("polyline",polyline);
+
+                Log.d("JSON",JSON);
+                int i = 0;
+                String polyline=JSON.replace(" ","");
+                String output = "";
+                do {
+                    i = polyline.indexOf("polyline");
+                    Log.d("polyline parse i",""+i);
+                    polyline = polyline.substring(i+8);
+                    Log.d("polyline parse 1",polyline);
+                    String polyline2 = polyline.split(",")[0];
+                    Log.d("polyline parse 2",polyline2);
+                    polyline2 = polyline2.split(":")[2];
+                    Log.d("polyline parse 3",polyline2);
+                    polyline2 = polyline2.substring(1, polyline2.length() - 3);
+                    Log.d("polyline", polyline2);
+                    output+=polyline2;
+                }
+                while (i>0);
 
                 Intent newIntent = new Intent("Polyline");
-                newIntent.putExtra("polyline",polyline);
+                newIntent.putExtra("polyline",output);
                 newIntent.setAction("polyline");
                 newIntent.addCategory(Intent.CATEGORY_DEFAULT);
                 sendBroadcast(newIntent);

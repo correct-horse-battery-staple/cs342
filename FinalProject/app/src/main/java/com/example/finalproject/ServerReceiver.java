@@ -16,6 +16,7 @@ public class ServerReceiver extends BroadcastReceiver {
         String s = intent.getStringExtra("data");
 
 
+
         ((ServerActivity)context).receiveServer();
     }
 }

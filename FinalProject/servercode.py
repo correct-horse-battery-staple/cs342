@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+#from http.server import BaseHTTPRequestHandler, HTTPServer
 import json, ast, random
 
 class handler(BaseHTTPRequestHandler):
@@ -10,6 +11,12 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        
+        # List of operations:
+        # login/user:passhash
+        # register/user:passhash
+        # token/[token]/[operation]
+        
         self.set_headers()
         request = self.raw_requestline.replace('GET ', '').split(' HTTP')[0][1:] #remove first slash
         try:
@@ -20,7 +27,9 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write('<html><body><h1>Query in this format "ip/[operation]/" </h1></body></html>\n')
             return
         
-        if operation.lower() == 'login' or operation.lower() == 'register':
+        print(operation.lower())
+        
+        if operation.lower() == 'login':
             no_file_userpass = False
             try: 
                 userpass_file = open('userpass_data', 'r')
@@ -37,39 +46,69 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write('<html><body><h1>No users exist.</h1></body></html>\n')
                 no_file_userpass = True
             
-            if not no_file_userpass:   
+            if not no_file_userpass:
                 #Retrieves username and passhash, i.e., url:port/login/user:passhash
                 username = request.split('/')[1].split(':')[0]
                 passhash = request.split('/')[1].split(':')[1]
-                if operation.lower() == 'login':
+                
                     #If login, check if user and password is valid. 
-                    try:
-                        stored_passhash = dictionary_userpass['Info'][username]
-                        if stored_passhash == passhash:
-                            self.wfile.write('<html><body><h1>Successful login for %s</h1></body></html>\n' % (username))
-                            
-                            ###    ISSUE TOKEN
-                            rand = random.getrandbits(6);
-                            temp = rand
-                            while temp>0:
-                                lastChar = temp%26
-                                temp/=26
-                                token+=(char)(temp+65)
-                            send_response(token)
-                    except KeyError:
-                        self.wfile.write('<html><body><h1>The requested user [%s] was not found in the system.</h1></body></html>\n' % (username))
+                try:
+                    stored_passhash = dictionary_userpass['Info'][username]
+                    if stored_passhash == passhash:
+                        
+                        ###    ISSUE TOKEN
+                        rand = random.getrandbits(6);
+                        temp = rand
+                        while temp>0:
+                            lastChar = temp%26
+                            temp/=26
+                            token+=(char)(temp+65)
+                        #send_response(token)
+                        
+                        self.wfile.write('<html><body><h1>Successful login for %s; issued token %s</h1></body></html>\n' % (username,token))
+                        
+                except KeyError:
+                    self.wfile.write('<html><body><h1>The requested user [%s] was not found in the system.</h1></body></html>\n' % (username))
+                
+            else:
+                #Query format error.
+                self.wfile.write('<html><body><h1>Query in this format "register/USER:PASSHASH" </h1></body></html>\n')
+                return
+                
+        elif operation.lower() == 'register':
+            username = request.split('/')[1].split(':')[0]
+            passhash = request.split('/')[1].split(':')[1]
+            
+            no_file_userpass = False
+            try: 
+                userpass_file = open('userpass_data', 'r')
+                data = userpass_file.read()
+                userpass_file.close()
+            
+                dictionary_userpass = "{\n\t'Info': {\n"
+                dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
+                dictionary_userpass += '\n\t}\n}'
+                dictionary_userpass = ast.literal_eval(dictionary_userpass)
+                
+            except IOError:
+                no_file_userpass = True
+                print 'no registered users'
+                with open('userpass_data', 'ab') as content:
+                    content.write(
+                    '''"%s": "%s"\n,''' % (username,passhash)
+                    )
+                #Also send a response giving a confirmation.
+                self.wfile.write('<html><body><h1>Registered new user %s </h1></body></html>\n' % username)
                     
-                elif operation.lower() == 'register':
+            if not no_file_userpass :
+                if username not in dictionary_userpass:
                     with open('userpass_data', 'ab') as content:
                         content.write(
                         '''"%s": "%s"\n,''' % (username,passhash)
                         )
-                    #Also send a response giving a confirmation.
-                    self.wfile.write('<html><body><h1>Registered new user %s </h1></body></html>\n' % username)
+                        self.wfile.write('<html><body><h1>Registered new user %s </h1></body></html>\n' % username)
                 else:
-                    #Query format error.
-                    self.wfile.write('<html><body><h1>Query in this format "register/USER:PASSHASH" </h1></body></html>\n')
-                    return
+                    self.wfile.write('<html><body><h1>User already exists</h1></body></html>\n')
         
         elif operation.lower() == 'token':
             no_file_tokens = False
@@ -93,18 +132,22 @@ class handler(BaseHTTPRequestHandler):
             
             try:
                 token_user = dictionary_tokens['Tokens'][token]
-                get_operation(token_user,operation)
+                self.wfile.write('<html><body><h1>Token %s accepted</h1></body></html>' % token)
+                do_operation(token_user,operation)
             except KeyError:
                 self.wfile.write('<html><body><h1>Token invalid</h1></body></html>')
-            
+                
+        elif operation.lower() == 'logout':
+            return
         return
         
-    def get_operation(user,op):
-        data_file = open('saved_data','r')
-        data = data_file.read()
-        data_file.close()
-
-        data = json.load(data)
+    def do_operation(user,op):
+        return
+#         data_file = open('','r')
+#         data = data_file.read()
+#         data_file.close()
+# 
+#         data = json.load(data)
         
 def run():
     http_serv = HTTPServer(('', 47159), handler)

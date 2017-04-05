@@ -34,15 +34,14 @@ public class StartupActivity extends ServerActivity {
         intentFilter.addAction("output");
         ServerReceiver receiver = new ServerReceiver();
         registerReceiver(receiver,intentFilter);
+
+        verifyPermissions(this);
     }
 
     public void onClick(View v){
         Log.d("button","clicked");
         if(!DEBUG_SKIP_SERVER_ACCESS) {
-            Intent intent = new Intent(this, ServerService.class);
-            intent.setAction("access");
-            intent.putExtra("mode","GET");
-            intent.putExtra("params","ping");
+            Intent intent = ServerService.serverIntent(this, "ping");
             startService(intent);
         }
     }
@@ -52,5 +51,15 @@ public class StartupActivity extends ServerActivity {
         TextView textView = (TextView)findViewById(R.id.startup_text);
         textView.setText("Server response received:\n"+i.getStringExtra("response"));
         Log.d("server","Server response received:"+i.getStringExtra("response"));
+    }
+
+    public void verifyPermissions(Activity activity) {
+        int cameraPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.INTERNET);
+
+        String[] permissions = {Manifest.permission.INTERNET};
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity,permissions,1);
+            Log.d("permissions","requested");
+        }
     }
 }

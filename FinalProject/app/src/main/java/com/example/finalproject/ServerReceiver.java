@@ -13,6 +13,9 @@ public class ServerReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String type = intent.getStringExtra("type");
+        String data = intent.getStringExtra("data");
+
         ((ServerActivity)context).receiveServer(intent);
     }
 }

@@ -9,65 +9,12 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-
-    def do_GET(self):
-        
-        self.set_headers()
-        request = self.raw_requestline.replace('GET ', '').split(' HTTP')[0][1:] #remove first slash
-        try:
-            #Retrieves first parameter, i.e., url:port/login
-            operation = request.split('/')[0]
-            
-        except IndexError:
-            self.wfile.write('<html><body><h1>Query in this format "ip/[operation]/" </h1></body></html>\n')
-            return
-        
-        if operation.lower() == 'token':
-            no_file_tokens = False
-            try: 
-                tokens_file = open('tokens_data', 'r')
-                data = tokens_file.read()
-                tokens_file.close()
-    
-                dictionary_tokens = "{\n\t'Tokens': {\n"
-                dictionary_tokens += '\t\t\n'.join(data.lower().splitlines())
-                dictionary_tokens += '\n\t}\n}'
-                dictionary_tokens = ast.literal_eval(dictionary_userpass)
-            except IOError:
-                #if no file exists
-                self.wfile.write('<html><body><h1>No tokens exist.</h1></body></html>\n')
-                no_file_tokens = True
-                
-            #token/[token]?operation
-            use_token = true
-            token = request.split('/')[1].split('?')[0]
-            try:
-                operation = request.split('/')[1].split('?')[1].split(':')[0]
-                input = request.split('/')[1].split('?')[1].split(':')[1]
-            except IndexError:
-                self.wfile.write('<html><body><h1>Format input as /token/[token]?operation:data.</h1></body></html>\n')
-                use_token = false
-            
-            if use_token:
-                try:
-                    token_user = dictionary_tokens['Tokens'][token]
-                    self.wfile.write('<html><body><h1>Token %s accepted</h1></body></html>' % token)
-                    do_operation(token_user,operation,input)
-                except KeyError:
-                    self.wfile.write('<html><body><h1>Token invalid</h1></body></html>')
-                    
-        elif operation.lower() == 'ping':
-            send_response("ping")
-            self.wfile.write('pingu');
-        return
         
     def do_POST(self):
         
         # List of operations:
         # login/user:passhash
         # register/user:passhash
-        # token/[token]/[operation]
-        # ping
         
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
@@ -76,13 +23,15 @@ class handler(BaseHTTPRequestHandler):
         print(fields)
         
         self.set_headers()
-        request = self.raw_requestline.replace('GET ', '').split(' HTTP')[0][1:] #remove first slash
+        request = self.raw_requestline.replace('POST ', '').split(' HTTP')[0][1:] #remove first slash
+
+        print(request)
         try:
             #Retrieves first parameter, i.e., url:port/login
             operation = request.split('/')[0]
             
         except IndexError:
-            self.wfile.write('<html><body><h1>Query in this format "ip/[operation]/" </h1></body></html>\n')
+            self.wfile.write('error/input:invalid_operation')
             return
         
         if operation.lower() == 'login':
@@ -99,7 +48,7 @@ class handler(BaseHTTPRequestHandler):
                 
             except IOError:
                 #if no file exists
-                self.wfile.write('<html><body><h1>No users exist.</h1></body></html>\n')
+                self.wfile.write('error/login:no_users')
                 no_file_userpass = True
             
             if not no_file_userpass:
@@ -121,14 +70,14 @@ class handler(BaseHTTPRequestHandler):
                             token+=(char)(temp+65)
                         send_response(token)
                         
-                        self.wfile.write('<html><body><h1>Successful login for %s; issued token %s</h1></body></html>\n' % (username,token))
+                        self.wfile.write('login/success'+token)
                         
                 except KeyError:
-                    self.wfile.write('<html><body><h1>The requested user [%s] was not found in the system.</h1></body></html>\n' % (username))
+                    self.wfile.write('The requested user [%s] was not found in the system.\n' % (username))
                 
             else:
                 #Query format error.
-                self.wfile.write('<html><body><h1>Query in this format "register/USER:PASSHASH" </h1></body></html>\n')
+                self.wfile.write('error/login:format')
                 return
                 
         elif operation.lower() == 'register':
@@ -148,13 +97,12 @@ class handler(BaseHTTPRequestHandler):
                 
             except IOError:
                 no_file_userpass = True
-                print 'no registered users'
                 with open('userpass_data', 'ab') as content:
                     content.write(
                     '''"%s": "%s"\n,''' % (username,passhash)
                     )
                 #Also send a response giving a confirmation.
-                self.wfile.write('<html><body><h1>Registered new user %s </h1></body></html>\n' % username)
+                self.wfile.write('register/success')
                     
             if not no_file_userpass :
                 if username not in dictionary_userpass:
@@ -162,9 +110,46 @@ class handler(BaseHTTPRequestHandler):
                         content.write(
                         '''"%s": "%s"\n,''' % (username,passhash)
                         )
-                        self.wfile.write('<html><body><h1>Registered new user %s </h1></body></html>\n' % username)
+                        self.wfile.write('register/success')
                 else:
-                    self.wfile.write('<html><body><h1>User already exists</h1></body></html>\n')
+                    self.wfile.write('error/register:username_in_use')
+
+        elif operation.lower() == 'token':
+            no_file_tokens = False
+            try: 
+                tokens_file = open('tokens_data', 'r')
+                data = tokens_file.read()
+                tokens_file.close()
+    
+                dictionary_tokens = "{\n\t'Tokens': {\n"
+                dictionary_tokens += '\t\t\n'.join(data.lower().splitlines())
+                dictionary_tokens += '\n\t}\n}'
+                dictionary_tokens = ast.literal_eval(dictionary_userpass)
+            except IOError:
+                #if no file exists
+                self.wfile.write('error/token:no_file')
+                no_file_tokens = True
+                
+            #token/[token]?operation
+            use_token = true
+            token = request.split('/')[1].split('?')[0]
+            try:
+                operation = request.split('/')[1].split('?')[1].split(':')[0]
+                input = request.split('/')[1].split('?')[1].split(':')[1]
+            except IndexError:
+                self.wfile.write('error/token:bad_input')
+                use_token = false
+            
+            if use_token:
+                try:
+                    token_user = dictionary_tokens['Tokens'][token]
+                    self.wfile.write('Token %s accepted' % token)
+                    do_operation(token_user,operation,input)
+                except KeyError:
+                    self.wfile.write('error/token:no_token')
+                    
+        elif operation.lower() == 'ping':
+            self.wfile.write('ping/success');
         return
         
     def do_operation(user,op,input):
@@ -175,10 +160,10 @@ class handler(BaseHTTPRequestHandler):
  
         data = json.load(data)
         if op == 'load':
-            self.wfile.write('<html><body><h1>Data loaded</h1></body></html>')
+            self.wfile.write('operation/load')
         elif op == 'update':
             if user in data:
-                self.wfile.write('<html><body><h1>User updated</h1></body></html>')
+                self.wfile.write('operation/write')
         return
         
 def run():

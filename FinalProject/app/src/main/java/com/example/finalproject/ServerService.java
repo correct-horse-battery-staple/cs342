@@ -83,14 +83,14 @@ public class ServerService extends IntentService {
                     Log.d("response",response.toString());
 
                     String responseString = response.toString();
-                    String type = responseString.split(":")[0];
-                    //String data = responseString.split(":")[1];
+                    String type = responseString.split("/")[0];
+                    String data = responseString.split("/")[1];
 
                     Intent newIntent = new Intent("output");
                     newIntent.setAction("output");
                     newIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     newIntent.putExtra("type",type);
-                    //newIntent.putExtra("data",data);
+                    newIntent.putExtra("data",data);
                     newIntent.putExtra("response",responseString);
                     sendBroadcast(newIntent);
                     Log.d("server output","broadcast sent "+newIntent.toString());

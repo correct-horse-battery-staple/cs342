@@ -70,10 +70,10 @@ class handler(BaseHTTPRequestHandler):
                             token+=(char)(temp+65)
                         send_response(token)
                         
-                        self.wfile.write('login/success'+token)
+                        self.wfile.write('login/success:'+token)
                         
                 except KeyError:
-                    self.wfile.write('The requested user [%s] was not found in the system.\n' % (username))
+                    self.wfile.write('error/login:no_user')
                 
             else:
                 #Query format error.
@@ -143,7 +143,6 @@ class handler(BaseHTTPRequestHandler):
             if use_token:
                 try:
                     token_user = dictionary_tokens['Tokens'][token]
-                    self.wfile.write('Token %s accepted' % token)
                     do_operation(token_user,operation,input)
                 except KeyError:
                     self.wfile.write('error/token:no_token')
@@ -160,10 +159,10 @@ class handler(BaseHTTPRequestHandler):
  
         data = json.load(data)
         if op == 'load':
-            self.wfile.write('operation/load')
+            self.wfile.write('token/load')
         elif op == 'update':
             if user in data:
-                self.wfile.write('operation/write')
+                self.wfile.write('token/write')
         return
         
 def run():

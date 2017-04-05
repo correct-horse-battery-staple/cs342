@@ -1,6 +1,7 @@
 package com.example.finalproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -8,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class ServerActivity extends AppCompatActivity {
-    public void receiveServer(){
+    public void receiveServer(Intent i){
         return;
     }
 }

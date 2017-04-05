@@ -13,10 +13,6 @@ public class ServerReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String s = intent.getStringExtra("data");
-
-
-
-        ((ServerActivity)context).receiveServer();
+        ((ServerActivity)context).receiveServer(intent);
     }
 }

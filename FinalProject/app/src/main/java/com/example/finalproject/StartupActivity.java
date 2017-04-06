@@ -14,6 +14,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -67,15 +71,33 @@ public class StartupActivity extends ServerActivity {
         }
         else if(type.equals("login")){
             if(data.split(":")[0].equals("success")){
-                preferencesEditor.putString("token",data.split(":")[1]);
+                String token = data.split(":")[1];
+                preferencesEditor.putString("token",token);
                 preferencesEditor.commit();
+                setText(token);
             }
         }
         else if(type.equals("register")){
 
         }
-        else if(type.equals("text")){
+        else if(type.equals("token")){
+            String op = data.split(":")[0];
+            if(op.equals("load")) {
+                try {
+                    JSONObject json = new JSONObject(data.split(":")[1]);
+                    JSONArray userdata=json.getJSONArray("userdata");
+                    for(int i = 0; i < userdata.length(); i++){
+                        JSONObject dataObject = userdata.getJSONObject(i);
 
+                    }
+                }
+                catch(JSONException i) {
+                    i.printStackTrace();
+                }
+            }
+            else if(op.equals("write")){
+
+            }
         }
     }
 

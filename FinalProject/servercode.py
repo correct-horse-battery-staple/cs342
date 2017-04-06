@@ -130,12 +130,12 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write('error/token:no_file')
                 no_file_tokens = True
                 
-            #token/[token]?operation
+            #token/[token]?operation:data
             use_token = true
             token = request.split('/')[1].split('?')[0]
             try:
                 operation = request.split('/')[1].split('?')[1].split(':')[0]
-                input = request.split('/')[1].split('?')[1].split(':')[1]
+                input_data = request.split('/')[1].split('?')[1].split(':')[1]
             except IndexError:
                 self.wfile.write('error/token:bad_input')
                 use_token = false
@@ -143,7 +143,7 @@ class handler(BaseHTTPRequestHandler):
             if use_token:
                 try:
                     token_user = dictionary_tokens['Tokens'][token]
-                    do_operation(token_user,operation,input)
+                    do_operation(token_user,operation,input_data)
                 except KeyError:
                     self.wfile.write('error/token:no_token')
                     
@@ -156,12 +156,24 @@ class handler(BaseHTTPRequestHandler):
         data_file = open('','r')
         data = data_file.read()
         data_file.close()
- 
-        data = json.load(data)
+ 		
+ 		# data = {
+ 		# userdata [
+ 		#  {username, weight: [value, datetime], ...}]}
+        data = json.loads(data)
+        data = data['userdata']
+        datadict = {}
+        for i in data:
+        	datadict[i['username']]=i['weight']
+        # datadict = {
+        # username:[weight:[value,datetime],...], ...}
+
         if op == 'load':
-            self.wfile.write('token/load')
+        	data_dump = json.dumps(datadict[user])
+            self.wfile.write('token/load:'+data_dump)
         elif op == 'update':
-            if user in data:
+            if user in datadict:
+
                 self.wfile.write('token/write')
         return
         

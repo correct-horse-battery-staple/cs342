@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_REGISTER"
+        android:text="Register"
+        android:textSize="28dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_REGISTER"
+        android:id="@+id/register_USERNAME"
+        android:text="Username"
+        android:layout_marginLeft="16dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_USERNAME"
+        android:id="@+id/register_USERNAME_FIELD"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_USERNAME_FIELD"
+        android:id="@+id/register_PASSWORD"
+        android:text="Password"
+        android:layout_marginLeft="16dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_PASSWORD"
+        android:id="@+id/register_PASSWORD_FIELD"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_PASSWORD_FIELD"
+        android:id="@+id/register_SUBMIT"
+        android:text="Submit"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_SUBMIT"
+        android:id="@+id/register_SWITCH"
+        android:text="Login"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>

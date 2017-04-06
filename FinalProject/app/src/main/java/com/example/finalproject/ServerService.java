@@ -91,11 +91,11 @@ public class ServerService extends IntentService {
                     newIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     newIntent.putExtra("type",type);
                     newIntent.putExtra("data",data);
-                    newIntent.putExtra("response",responseString);
+                    //newIntent.putExtra("response",responseString);
                     sendBroadcast(newIntent);
                     Log.d("server output","broadcast sent "+newIntent.toString());
-
                 } catch (Exception e) {
+                    ///modify so if no response, do appropriate things
                     e.printStackTrace();
                 } finally {
                     if(connection != null) {

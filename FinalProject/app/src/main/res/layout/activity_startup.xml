@@ -12,12 +12,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/startup_text"
-        android:text="Original text"/>
-    <Button
+        android:id="@+id/startup_TEXT"
+        android:text="App starting"
+        android:textSize="40dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="60dp"/>
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/startup_text"
-        android:text="Server ping"
-        android:onClick="onClick"/>
+        android:layout_below="@id/startup_TEXT"/>
 </RelativeLayout>

@@ -27,9 +27,6 @@ import java.net.URL;
 
 public class StartupActivity extends ServerActivity {
 
-    final boolean DEBUG_SKIP_SERVER_ACCESS = false;
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor preferencesEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,61 +41,18 @@ public class StartupActivity extends ServerActivity {
 
         verifyPermissions(this);
 
-        preferences=getPreferences(0);
-        preferencesEditor = preferences.edit();
+        Intent intent = ServerService.serverIntent(this, "ping");
+        startService(intent);
     }
 
     public void onClick(View v){
         Log.d("button","clicked");
-        if(!DEBUG_SKIP_SERVER_ACCESS) {
-            Intent intent = ServerService.serverIntent(this, "ping");
-            startService(intent);
-        }
     }
 
     @Override
     public void receiveServer(Intent intent){
-
-        String type = intent.getStringExtra("type");
-        String data = intent.getStringExtra("data");
-
-
-        //types: error, login, register, token
-        if(type.equals("error")){
-            String op = data.split(":")[0];
-            String error = data.split(":")[1];
-            setText(op+" error: "+error);
-        }
-        else if(type.equals("login")){
-            if(data.split(":")[0].equals("success")){
-                String token = data.split(":")[1];
-                preferencesEditor.putString("token",token);
-                preferencesEditor.commit();
-                setText(token);
-            }
-        }
-        else if(type.equals("register")){
-
-        }
-        else if(type.equals("token")){
-            String op = data.split(":")[0];
-            if(op.equals("load")) {
-                try {
-                    JSONObject json = new JSONObject(data.split(":")[1]);
-                    JSONArray userdata=json.getJSONArray("userdata");
-                    for(int i = 0; i < userdata.length(); i++){
-                        JSONObject dataObject = userdata.getJSONObject(i);
-
-                    }
-                }
-                catch(JSONException i) {
-                    i.printStackTrace();
-                }
-            }
-            else if(op.equals("write")){
-
-            }
-        }
+        super.receiveServer(intent);
+        setText(intent.getStringExtra("type")+" "+intent.getStringExtra("data"));
     }
 
     private void setText(String s){

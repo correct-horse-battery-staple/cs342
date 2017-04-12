@@ -20,11 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity" />
 
         <service
             android:name=".ServerService"
-            android:exported="false"></service>
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -7,9 +7,9 @@ data = data_file.read()
 data_file.close()
 
 data = json.loads(data)
-# print(data)
+print(data)
 data = data['userdata']
-# print(data)
+print(data)
 datadict = {}
 for i in data:
     #print(i)

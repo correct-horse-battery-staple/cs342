@@ -20,15 +20,10 @@ class handler(BaseHTTPRequestHandler):
         
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
-        #fields = urlparse.parse_qs(field_data)
         
         self.set_headers()
 
         request = field_data
-
-        #self.wfile.write(request)
-
-        #print(request)
         try:
             #Retrieves first parameter, i.e., url:port/login
             operation = request.split('/')[0]
@@ -47,41 +42,31 @@ class handler(BaseHTTPRequestHandler):
                 dictionary_userpass = "{\n\t'Info': {\n"
                 dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
                 dictionary_userpass += '\n\t}\n}'
-                dictionary_userpass = ast.literal_eval(dictionary_userpass)
-                
-            except IOError:
-                #if no file exists
-                self.wfile.write('error/login:no_users')
-                no_file_userpass = True
-            
-            if not no_file_userpass:
+                dictionary_userpass = ast.literal_eval(dictionary_userpass)      
+                dictionary_userpass = dictionary_userpass['Info']
+
                 #Retrieves username and passhash, i.e., url:port/login/user:passhash
                 username = request.split('/')[1].split(':')[0]
                 passhash = request.split('/')[1].split(':')[1]
                 
-                    #If login, check if user and password is valid. 
+                #If login, check if user and password is valid. 
                 try:
-                    stored_passhash = dictionary_userpass['Info'][username]
+                    stored_passhash = dictionary_userpass[username]
                     if stored_passhash == passhash:
-                        token = "";
                         ###    ISSUE TOKEN
-                        rand = random.getrandbits(6);
-                        temp = rand
-                        while temp>0:
-                            lastChar = temp%26
-                            temp/=26
-                            token+=(char)(temp+65)
-                        send_response(token)
-                        
-                        self.wfile.write('login/success:'+token)
+                        rand = random.getrandbits(15);                
+                        self.wfile.write('login/success:'+str(rand))
+                    else:
+                        #Query format error.
+                        self.wfile.write('error/login:format')
+                        return
                         
                 except KeyError:
                     self.wfile.write('error/login:no_user')
                 
-            else:
-                #Query format error.
-                self.wfile.write('error/login:format')
-                return
+            except IOError:
+                #if no file exists
+                self.wfile.write('error/login:no_users')
                 
         elif operation.lower() == 'register':
             username = request.split('/')[1].split(':')[0]
@@ -97,25 +82,25 @@ class handler(BaseHTTPRequestHandler):
                 dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
                 dictionary_userpass += '\n\t}\n}'
                 dictionary_userpass = ast.literal_eval(dictionary_userpass)
-                
-            except IOError:
-                no_file_userpass = True
-                with open('userpass_data', 'ab') as content:
-                    content.write(
-                    '''"%s": "%s"\n,''' % (username,passhash)
-                    )
-                #Also send a response giving a confirmation.
-                self.wfile.write('register/success')
-                    
-            if not no_file_userpass :
+
+                dictionary_userpass = dictionary_userpass['Info']
+
                 if username not in dictionary_userpass:
                     with open('userpass_data', 'ab') as content:
                         content.write(
-                        '''"%s": "%s"\n,''' % (username,passhash)
+                        '''"%s": "%s"\n''' % (username,passhash)
                         )
                         self.wfile.write('register/success')
                 else:
                     self.wfile.write('error/register:username_in_use')
+                
+            except IOError:
+                with open('userpass_data', 'ab') as content:
+                    content.write(
+                    '''"%s": "%s"\n''' % (username,passhash)
+                    )
+                #Also send a response giving a confirmation.
+                self.wfile.write('register/success')
 
         elif operation.lower() == 'token':
             no_file_tokens = False

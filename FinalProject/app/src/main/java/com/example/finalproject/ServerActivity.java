@@ -40,7 +40,6 @@ public class ServerActivity extends AppCompatActivity {
 
         //types: ping, error, login, register, token
 
-        Log.d("app ping?", ""+type.equals("ping"));
         if(type.equals("ping")){
             //Log.d("app receiveServer ping", getClass().toString());
             if(getClass().isInstance(new StartupActivity())) {
@@ -61,7 +60,7 @@ public class ServerActivity extends AppCompatActivity {
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString("token",token);
                 preferencesEditor.commit();
-                Log.d("token",token);
+                Log.d("server token",token);
             }
         }
         else if(type.equals("register")){

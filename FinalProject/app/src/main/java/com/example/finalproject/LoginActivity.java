@@ -27,11 +27,11 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
     public void login(){
         EditText user = (EditText)findViewById(R.id.login_USERNAME_FIELD);
         EditText pass = (EditText)findViewById(R.id.login_PASSWORD_FIELD);
-        String username = user.getText().toString();
+        String userhash = user.getText().toString().hashCode()+"";
         String passhash = pass.getText().toString().hashCode()+"";
 
-        if(username.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.serverIntent(this,"login/"+username+":"+passhash);
+        if(userhash.length()>0&&passhash.length()>0){
+            Intent intent = ServerService.serverIntent(this,"login/"+userhash+":"+passhash);
             startService(intent);
         }
         else{
@@ -43,11 +43,11 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
     public void register(){
         EditText user = (EditText)findViewById(R.id.register_USERNAME_FIELD);
         EditText pass = (EditText)findViewById(R.id.register_PASSWORD_FIELD);
-        String username = user.getText().toString();
+        String userhash = user.getText().toString().hashCode()+"";
         String passhash = pass.getText().toString().hashCode()+"";
 
-        if(username.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.serverIntent(this,"register/"+username+":"+passhash);
+        if(userhash.length()>0&&passhash.length()>0){
+            Intent intent = ServerService.serverIntent(this,"register/"+userhash+":"+passhash);
             startService(intent);
         }
         else{

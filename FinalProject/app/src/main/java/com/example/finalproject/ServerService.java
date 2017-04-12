@@ -33,7 +33,7 @@ public class ServerService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            Log.d("app service","Service accessed");
+            //Log.d("app service","Service accessed");
 
             String params = intent.getStringExtra("params");
 
@@ -59,7 +59,7 @@ public class ServerService extends IntentService {
                     connection.setDoOutput(true);
 
                     Log.d("app URL POST",url.toString());
-                    Log.d("app params POST",params);
+                    //Log.d("app params POST",params);
 
                     //Send request
                     //DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
@@ -81,11 +81,11 @@ public class ServerService extends IntentService {
                     rd.close();
 
                     int code = connection.getResponseCode();
-                    Log.d("server code",""+code);
-                    if(code!=202)
-                        Log.d("server code","error");
+                    //Log.d("server code",""+code);
+                    //if(code!=202)
+                    //    Log.d("server code","error");
 
-                    Log.d("app response",response.length()+"");
+                    //Log.d("app response",response.length()+"");
                     Log.d("app response",response.toString());
 
                     String responseString = response.toString();

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * Created by panda_000 on 4/5/2017.
@@ -29,8 +30,14 @@ public class LoginActivity extends ServerActivity implements OnFragmentInteracti
         String username = user.getText().toString();
         String passhash = pass.getText().toString().hashCode()+"";
 
-        Intent intent = ServerService.serverIntent(this,"login/"+username+":"+passhash);
-        startService(intent);
+        if(username.length()>0&&passhash.length()>0){
+            Intent intent = ServerService.serverIntent(this,"login/"+username+":"+passhash);
+            startService(intent);
+        }
+        else{
+            setErrorMessage("Enter a valid username/password");
+        }
+
     }
 
     public void register(View v){
@@ -60,6 +67,11 @@ public class LoginActivity extends ServerActivity implements OnFragmentInteracti
                 login(v);
                 break;
         }
+    }
+
+    public void setErrorMessage(String s){
+        TextView textView = (TextView)findViewById(R.id.login_ERROR);
+        textView.setText(s);
     }
 }
 

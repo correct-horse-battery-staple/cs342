@@ -2,7 +2,9 @@ package com.example.finalproject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -16,21 +18,34 @@ import org.json.JSONObject;
 
 public class ServerActivity extends AppCompatActivity {
 
-    protected SharedPreferences preferences = getPreferences(0);
-    protected SharedPreferences.Editor preferencesEditor = preferences.edit();
+    @Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        IntentFilter intentFilter = new IntentFilter("server");
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        intentFilter.addAction("output");
+        ServerReceiver receiver = new ServerReceiver();
+        registerReceiver(receiver,intentFilter);
+    }
 
     public void receiveServer(Intent intent){
+
 
         String type = intent.getStringExtra("type");
         String data = intent.getStringExtra("data");
 
+        Log.d("app receiveServer type", type);
+        Log.d("app receiveServer data", data);
+
         //types: ping, error, login, register, token
+
+        Log.d("app ping?", ""+type.equals("ping"));
         if(type.equals("ping")){
-            if(data.split(":")[0].equals("success")){
-                if(!getClass().isInstance(new StartupActivity())) {
-                    Intent loginIntent = new Intent(this, LoginActivity.class);
-                    startActivity(loginIntent);
-                }
+            //Log.d("app receiveServer ping", getClass().toString());
+            if(getClass().isInstance(new StartupActivity())) {
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
             }
         }
         else if(type.equals("error")){
@@ -41,6 +56,9 @@ public class ServerActivity extends AppCompatActivity {
         else if(type.equals("login")){
             if(data.split(":")[0].equals("success")){
                 String token = data.split(":")[1];
+
+                SharedPreferences preferences = getPreferences(0);
+                SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString("token",token);
                 preferencesEditor.commit();
                 Log.d("token",token);

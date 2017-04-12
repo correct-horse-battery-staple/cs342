@@ -33,17 +33,17 @@ public class ServerService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            Log.d("service","Service accessed");
+            Log.d("app service","Service accessed");
 
             String params = intent.getStringExtra("params");
 
-            final String SERVER_URL = "http://148.85.1.65:47158/";
+            final String SERVER_URL = "http://148.85.1.65:47158";
             try {
                 URL url;
                 HttpURLConnection connection = null;
                 try {
 
-                    url = new URL(SERVER_URL);
+                    url = new URL(SERVER_URL+"/"+params);
                     connection = (HttpURLConnection)url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type",
@@ -58,7 +58,8 @@ public class ServerService extends IntentService {
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
 
-                    Log.d("URL POST",url.toString()+"/"+params);
+                    Log.d("app URL POST",url.toString());
+                    Log.d("app params POST",params);
 
                     //Send request
                     //DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
@@ -79,21 +80,30 @@ public class ServerService extends IntentService {
                     }
                     rd.close();
 
-                    Log.d("response",response.length()+"");
-                    Log.d("response",response.toString());
+                    int code = connection.getResponseCode();
+                    Log.d("server code",""+code);
+                    if(code!=202)
+                        Log.d("server code","error");
+
+                    Log.d("app response",response.length()+"");
+                    Log.d("app response",response.toString());
 
                     String responseString = response.toString();
-                    String type = responseString.split("/")[0];
-                    String data = responseString.split("/")[1];
+                    if(responseString.length()>0) {
+                        String type = responseString.split("/")[0];
+                        String data = responseString.split("/")[1];
 
-                    Intent newIntent = new Intent("output");
-                    newIntent.setAction("output");
-                    newIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    newIntent.putExtra("type",type);
-                    newIntent.putExtra("data",data);
-                    //newIntent.putExtra("response",responseString);
-                    sendBroadcast(newIntent);
-                    Log.d("server output","broadcast sent "+newIntent.toString());
+                        Intent newIntent = new Intent("output");
+                        newIntent.setAction("output");
+                        newIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        newIntent.putExtra("type", type);
+                        newIntent.putExtra("data", data);
+                        //newIntent.putExtra("response",responseString);
+                        sendBroadcast(newIntent);
+                        Log.d("server output", "broadcast sent " + newIntent.toString());
+                    }
+                    else
+                        Log.d("server output", "improper output");
                 } catch (Exception e) {
                     ///modify so if no response, do appropriate things
                     e.printStackTrace();

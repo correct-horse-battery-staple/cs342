@@ -18,9 +18,23 @@
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginTop="60dp"/>
-    <ImageView
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp" />
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/startup_TEXT"/>
+        android:id="@+id/startup_BUTTON_SKIP"
+        android:text="Skip"
+        android:onClick="onClick"
+        android:layout_below="@id/startup_TEXT"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/startup_BUTTON_PING"
+        android:text="Ping"
+        android:onClick="ping"
+        android:layout_below="@id/startup_BUTTON_SKIP"
+        android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>

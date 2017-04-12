@@ -33,32 +33,11 @@ public class StartupActivity extends ServerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
 
-        IntentFilter intentFilter = new IntentFilter("server");
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        intentFilter.addAction("output");
-        ServerReceiver receiver = new ServerReceiver();
-        registerReceiver(receiver,intentFilter);
-
         verifyPermissions(this);
 
+        Log.d("app startup","sending intent");
         Intent intent = ServerService.serverIntent(this, "ping");
         startService(intent);
-    }
-
-    public void onClick(View v){
-        Log.d("button","clicked");
-    }
-
-    @Override
-    public void receiveServer(Intent intent){
-        super.receiveServer(intent);
-        setText(intent.getStringExtra("type")+" "+intent.getStringExtra("data"));
-    }
-
-    private void setText(String s){
-        TextView textView = (TextView)findViewById(R.id.startup_text);
-        textView.setText(s);
-        Log.d("text","Text changed to \""+s+"\"");
     }
 
     public void verifyPermissions(Activity activity) {
@@ -67,7 +46,17 @@ public class StartupActivity extends ServerActivity {
         String[] permissions = {Manifest.permission.INTERNET};
         if (cameraPermission != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(activity,permissions,1);
-            Log.d("permissions","requested");
+            Log.d("app permissions","requested");
         }
+    }
+
+    public void onClick(View v){
+        Intent intent = new Intent(this,LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void ping(View v){
+        Intent intent = ServerService.serverIntent(this, "ping");
+        startService(intent);
     }
 }

@@ -15,17 +15,20 @@ class handler(BaseHTTPRequestHandler):
         # List of operations:
         # login/user:passhash
         # register/user:passhash
+        # token/[token]?operation:data
+        # ping
         
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
-        fields = urlparse.parse_qs(field_data)
-        
-        print(fields)
+        #fields = urlparse.parse_qs(field_data)
         
         self.set_headers()
-        request = self.raw_requestline.replace('POST ', '').split(' HTTP')[0][1:] #remove first slash
 
-        print(request)
+        request = field_data
+
+        #self.wfile.write(request)
+
+        #print(request)
         try:
             #Retrieves first parameter, i.e., url:port/login
             operation = request.split('/')[0]
@@ -169,11 +172,10 @@ class handler(BaseHTTPRequestHandler):
         # username:[weight:[value,datetime],...], ...}
 
         if op == 'load':
-        	data_dump = json.dumps(datadict[user])
+            data_dump = json.dumps(datadict[user])
             self.wfile.write('token/load:'+data_dump)
         elif op == 'update':
             if user in datadict:
-
                 self.wfile.write('token/write')
         return
         

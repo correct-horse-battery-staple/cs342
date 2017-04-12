@@ -32,20 +32,36 @@ public class LoginFragment extends android.support.v4.app.Fragment {
         {
             @Override
             public void onClick(View v){
-                mListener.fragmentClick(2);
+                mListener.loginFragmentClick(0);
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v){
-                mListener.fragmentClick(3);
+                mListener.loginFragmentClick(1);
             }
         });
         return view;
     }
 
-    public interface OnFragmentInteractionListener {
-        void fragmentClick(int i);
+    @Override
+    public void onStart(){
+        super.onStart();
+        try {
+            mListener = (OnFragmentInteractionListener) getActivity();
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()+ " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    interface OnFragmentInteractionListener{
+        void loginFragmentClick(int i);
     }
 }

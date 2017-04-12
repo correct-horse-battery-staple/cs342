@@ -32,27 +32,26 @@ public class RegisterFragment extends android.support.v4.app.Fragment {
         {
             @Override
             public void onClick(View v){
-                mListener.fragmentClick(0);
+                mListener.registerFragmentClick(0);
             }
         });
         registerButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v){
-                mListener.fragmentClick(1);
+                mListener.registerFragmentClick(1);
             }
         });
         return view;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof RegisterFragment.OnFragmentInteractionListener) {
-            mListener = (RegisterFragment.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onStart(){
+        super.onStart();
+        try {
+            mListener = (OnFragmentInteractionListener) getActivity();
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()+ " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -62,7 +61,7 @@ public class RegisterFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        void fragmentClick(int i);
+    interface OnFragmentInteractionListener{
+        void registerFragmentClick(int i);
     }
 }

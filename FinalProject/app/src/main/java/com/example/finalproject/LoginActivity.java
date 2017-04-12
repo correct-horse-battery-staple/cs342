@@ -13,7 +13,7 @@ import android.widget.TextView;
  * Created by panda_000 on 4/5/2017.
  */
 
-public class LoginActivity extends ServerActivity implements OnFragmentInteractionListener {
+public class LoginActivity extends ServerActivity implements LoginFragment.OnFragmentInteractionListener,RegisterFragment.OnFragmentInteractionListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,9 +24,9 @@ public class LoginActivity extends ServerActivity implements OnFragmentInteracti
         fm.beginTransaction().add(R.id.activity_login, fragment).commit();
     }
 
-    public void login(View v){
-        EditText user = (EditText)v.findViewById(R.id.login_USERNAME_FIELD);
-        EditText pass = (EditText)v.findViewById(R.id.login_PASSWORD_FIELD);
+    public void login(){
+        EditText user = (EditText)findViewById(R.id.login_USERNAME_FIELD);
+        EditText pass = (EditText)findViewById(R.id.login_PASSWORD_FIELD);
         String username = user.getText().toString();
         String passhash = pass.getText().toString().hashCode()+"";
 
@@ -40,31 +40,41 @@ public class LoginActivity extends ServerActivity implements OnFragmentInteracti
 
     }
 
-    public void register(View v){
-        EditText user = (EditText)v.findViewById(R.id.register_USERNAME_FIELD);
-        EditText pass = (EditText)v.findViewById(R.id.register_PASSWORD_FIELD);
+    public void register(){
+        EditText user = (EditText)findViewById(R.id.register_USERNAME_FIELD);
+        EditText pass = (EditText)findViewById(R.id.register_PASSWORD_FIELD);
         String username = user.getText().toString();
         String passhash = pass.getText().toString().hashCode()+"";
 
-        Intent intent = ServerService.serverIntent(this,"login/"+username+":"+passhash);
-        startService(intent);
+        if(username.length()>0&&passhash.length()>0){
+            Intent intent = ServerService.serverIntent(this,"register/"+username+":"+passhash);
+            startService(intent);
+        }
+        else{
+            setErrorMessage("Enter a valid username/password");
+        }
     }
 
-    public void fragmentClick(View v, int i){
+    public void loginFragmentClick(int i){
+        switch(i){
+            case 0:
+                Fragment registerFragment = new RegisterFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_login, registerFragment).commit();
+                break;
+            case 1:
+                login();
+                break;
+        }
+    }
+
+    public void registerFragmentClick(int i){
         switch(i){
             case 0:
                 Fragment loginFragment = new LoginFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.activity_login, loginFragment).commit();
                 break;
             case 1:
-                register(v);
-                break;
-            case 2:
-                Fragment registerFragment = new RegisterFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_login, registerFragment).commit();
-                break;
-            case 3:
-                login(v);
+                register();
                 break;
         }
     }
@@ -73,8 +83,4 @@ public class LoginActivity extends ServerActivity implements OnFragmentInteracti
         TextView textView = (TextView)findViewById(R.id.login_ERROR);
         textView.setText(s);
     }
-}
-
-interface OnFragmentInteractionListener {
-    void fragmentClick(View v, int i);
 }

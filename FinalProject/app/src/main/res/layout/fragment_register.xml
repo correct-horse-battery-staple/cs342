@@ -36,7 +36,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/register_PASSWORD"
-        android:id="@+id/register_PASSWORD_FIELD"/>
+        android:id="@+id/register_PASSWORD_FIELD"
+        android:inputType="textPassword"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

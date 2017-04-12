@@ -63,7 +63,7 @@ class handler(BaseHTTPRequestHandler):
                 try:
                     stored_passhash = dictionary_userpass['Info'][username]
                     if stored_passhash == passhash:
-                        
+                        token = "";
                         ###    ISSUE TOKEN
                         rand = random.getrandbits(6);
                         temp = rand

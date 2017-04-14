@@ -39,9 +39,9 @@ class handler(BaseHTTPRequestHandler):
                 data = userpass_file.read()
                 userpass_file.close()
             
-                dictionary_userpass = "{\n"
-                dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
-                dictionary_userpass += '\n}'
+                dictionary_userpass = "{"
+                dictionary_userpass += ''.join(data.lower().splitlines())
+                dictionary_userpass += '}'
                 dictionary_userpass = ast.literal_eval(dictionary_userpass)
             except IOError:
                 #if no file exists
@@ -52,25 +52,6 @@ class handler(BaseHTTPRequestHandler):
             #Retrieves userhash and passhash, i.e., url:port/login/user:passhash
             userhash = request.split('/')[1].split(':')[0]
             passhash = request.split('/')[1].split(':')[1]
-            
-            #If login, check if user and password is valid. 
-            try:
-                stored_passhash = dictionary_userpass[userhash]
-                if stored_passhash == passhash:
-                    ###    ISSUE TOKEN
-                    rand = random.getrandbits(15);
-
-
-                    dictionary_tokens['userhash'] = rand
-
-                    self.wfile.write('login/success:'+str(rand))
-                else:
-                    #Query format error.
-                    self.wfile.write('login/failed')
-                    return
-                    
-            except KeyError:
-                self.wfile.write('error/login:no_user')
 
             try:
                 tokens_file = open('tokens_data', 'r')
@@ -80,10 +61,28 @@ class handler(BaseHTTPRequestHandler):
                 dictionary_tokens = "{\n\t'Tokens': {\n"
                 dictionary_tokens += '\t\t\n'.join(data.lower().splitlines())
                 dictionary_tokens += '\n\t}\n}'
-                dictionary_tokens = ast.literal_eval(dictionary_userpass)
+                dictionary_tokens = ast.literal_eval(dictionary_tokens)
                 dictionary_tokens = dictionary_tokens['Tokens']
             except IOError:
+                open('tokens_data', 'ab').write('')
                 self.wfile.write('error/login:no_tokens')
+                return
+
+            #If login, check if user and password is valid. 
+            try:
+                stored_passhash = dictionary_userpass[userhash]
+                if stored_passhash == passhash:
+                    ###    ISSUE TOKEN
+                    rand = random.getrandbits(15);
+                    dictionary_tokens['userhash'] = rand
+
+                    self.wfile.write('login/success:'+str(rand))
+                else:
+                    #Query format error.
+                    self.wfile.write('login/failed')
+                    return
+            except KeyError:
+                self.wfile.write('error/login:no_user')
                 
         elif operation.lower() == 'register':
             userhash = request.split('/')[1].split(':')[0]

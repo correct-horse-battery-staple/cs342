@@ -61,6 +61,9 @@ public class ServerActivity extends AppCompatActivity {
                 preferencesEditor.putString("token",token);
                 preferencesEditor.commit();
                 Log.d("server token",token);
+
+                Intent homeIntent = new Intent(this,HomeActivity.class);
+                startActivity(homeIntent);
             }
         }
         else if(type.equals("register")){

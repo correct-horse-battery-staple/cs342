@@ -2,28 +2,50 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <Button
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Height"
-        android:id="@+id/home_HEIGHT"/>
-    <Button
+        android:id="@+id/home_BUTTONS"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp">
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:text="Height"
+            android:id="@+id/home_HEIGHT"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"/>
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:text="Weight"
+            android:id="@+id/home_WEIGHT"
+            android:layout_toRightOf="@id/home_HEIGHT"
+            android:layout_alignTop="@+id/home_HEIGHT" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            android:text="Heartrate"
+            android:id="@+id/home_HEARTRATE"
+            android:layout_below="@id/home_HEIGHT"
+            android:layout_alignRight="@id/home_HEIGHT"
+            android:layout_alignLeft="@id/home_HEIGHT"/>
+        <Button
+            android:layout_height="110dp"
+            android:layout_width="0dp"
+            android:text="Steps"
+            android:id="@+id/home_STEPS"
+            android:layout_toRightOf="@id/home_HEARTRATE"
+            android:layout_below="@id/home_WEIGHT"
+            android:layout_alignLeft="@id/home_WEIGHT"
+            android:layout_alignRight="@id/home_WEIGHT"
+            android:layout_alignTop="@id/home_HEARTRATE"
+            android:layout_alignBottom="@id/home_HEARTRATE"/>
+    </RelativeLayout>
+
+    <com.jjoe64.graphview.GraphView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight"
-        android:id="@+id/home_WEIGHT"
-        android:layout_toRightOf="@id/home_HEIGHT"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Heartrate"
-        android:id="@+id/home_HEARTRATE"
-        android:layout_below="@id/home_HEIGHT"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Steps"
-        android:id="@+id/home_STEPS"
-        android:layout_toRightOf="@id/home_HEARTRATE"
-        android:layout_below="@id/home_WEIGHT"/>
+        android:layout_height="match_parent"
+        android:id="@+id/home_GRAPH"
+        android:layout_below="@id/home_BUTTONS"/>
 </RelativeLayout>

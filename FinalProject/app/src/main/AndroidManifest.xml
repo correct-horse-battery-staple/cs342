@@ -27,6 +27,8 @@
             android:name=".ServerService"
             android:exported="false" />
 
+        <activity android:name=".WeightActivity" />
+        <activity android:name=".HeartrateActivity"></activity>
     </application>
 
 </manifest>

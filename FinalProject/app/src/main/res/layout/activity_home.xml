@@ -11,8 +11,8 @@
         <Button
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:text="Height"
-            android:id="@+id/home_HEIGHT"
+            android:text="Activity"
+            android:id="@+id/home_ACTIVITY"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="30dp"/>
         <Button
@@ -20,16 +20,16 @@
             android:layout_height="110dp"
             android:text="Weight"
             android:id="@+id/home_WEIGHT"
-            android:layout_toRightOf="@id/home_HEIGHT"
-            android:layout_alignTop="@+id/home_HEIGHT" />
+            android:layout_toRightOf="@id/home_ACTIVITY"
+            android:layout_alignTop="@+id/home_ACTIVITY" />
         <Button
             android:layout_width="0dp"
             android:layout_height="110dp"
             android:text="Heartrate"
             android:id="@+id/home_HEARTRATE"
-            android:layout_below="@id/home_HEIGHT"
-            android:layout_alignRight="@id/home_HEIGHT"
-            android:layout_alignLeft="@id/home_HEIGHT"/>
+            android:layout_below="@id/home_ACTIVITY"
+            android:layout_alignRight="@id/home_ACTIVITY"
+            android:layout_alignLeft="@id/home_ACTIVITY"/>
         <Button
             android:layout_height="110dp"
             android:layout_width="0dp"
@@ -42,6 +42,7 @@
             android:layout_alignTop="@id/home_HEARTRATE"
             android:layout_alignBottom="@id/home_HEARTRATE"/>
     </RelativeLayout>
+
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="wrap_content"

@@ -27,7 +27,9 @@
             android:exported="false" />
 
         <activity android:name=".WeightActivity" />
-        <activity android:name=".HeartrateActivity"></activity>
+        <activity android:name=".HeartrateActivity"/>
+        <activity android:name=".ActivityActivity"/>
+        <activity android:name=".StepsActivity"/>
     </application>
 
 </manifest>

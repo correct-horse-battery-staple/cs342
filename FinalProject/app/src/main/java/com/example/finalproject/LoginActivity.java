@@ -1,11 +1,9 @@
 package com.example.finalproject;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,7 +29,7 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
         String passhash = pass.getText().toString().hashCode()+"";
 
         if(userhash.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.serverIntent(this,"login/"+userhash+":"+passhash);
+            Intent intent = ServerService.genericServerIntent(this,"login/"+userhash+":"+passhash);
             startService(intent);
         }
         else{
@@ -47,7 +45,7 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
         String passhash = pass.getText().toString().hashCode()+"";
 
         if(userhash.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.serverIntent(this,"register/"+userhash+":"+passhash);
+            Intent intent = ServerService.genericServerIntent(this,"register/"+userhash+":"+passhash);
             startService(intent);
         }
         else{
@@ -79,6 +77,7 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
         }
     }
 
+    @Override
     public void setErrorMessage(String s){
         TextView textView = (TextView)findViewById(R.id.login_ERROR);
         textView.setText(s);

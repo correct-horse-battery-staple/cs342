@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -23,10 +24,30 @@ public class ServerService extends IntentService {
         super("ServerService");
     }
 
-    public static Intent serverIntent(Activity activity, String params){
+    public static Intent genericServerIntent(Activity activity, String params){
         Intent intent = new Intent(activity, ServerService.class);
         intent.setAction("access");
         intent.putExtra("params",params);
+        return intent;
+    }
+
+    public static Intent getDataServerIntent(Activity activity, String params){
+        Intent intent = new Intent(activity,ServerService.class);
+        intent.setAction("access");
+        SharedPreferences preferences = activity.getPreferences(0);
+        String token = preferences.getString("token",null);
+        if(token!=null)
+            intent.putExtra("params","token/"+token+"?"+params);
+        return intent;
+    }
+
+    public static Intent putDataServerIntent(Activity activity, String params, String data){
+        Intent intent = new Intent(activity,ServerService.class);
+        intent.setAction("access");
+        SharedPreferences preferences = activity.getPreferences(0);
+        String token = preferences.getString("token",null);
+        if(token!=null)
+            intent.putExtra("params","token/"+token+"?"+params+":"+data);
         return intent;
     }
 

@@ -30,8 +30,6 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     public void receiveServer(Intent intent){
-
-
         String type = intent.getStringExtra("type");
         String data = intent.getStringExtra("data");
 
@@ -50,7 +48,10 @@ public class ServerActivity extends AppCompatActivity {
         else if(type.equals("error")){
             String op = data.split(":")[0];
             String error = data.split(":")[1];
+            error.replaceAll("_"," ");
+            error = error.substring(0,1).toUpperCase() + error.substring(1);
             Log.d("error",op+" "+error);
+            setErrorMessage(error);
         }
         else if(type.equals("login")){
             if(data.split(":")[0].equals("success")){
@@ -88,5 +89,9 @@ public class ServerActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void setErrorMessage(String s){
+        return;
     }
 }

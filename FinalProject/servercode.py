@@ -15,7 +15,7 @@ class handler(BaseHTTPRequestHandler):
         # List of operations:
         # login/user:passhash
         # register/user:passhash
-        # token/[token]?operation:data
+        # token/[token]?operation:[field]/data
         # ping
         
         length = int(self.headers.getheader('content-length'))
@@ -29,7 +29,7 @@ class handler(BaseHTTPRequestHandler):
             operation = request.split('/')[0]
             
         except IndexError:
-            self.wfile.write('error/input:invalid_operation')
+            self.wfile.write('error/input:invalid_operation') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             return
         
         if operation.lower() == 'login':
@@ -46,7 +46,7 @@ class handler(BaseHTTPRequestHandler):
             except IOError:
                 #if no file exists
                 open('userpass_data', 'ab').write('')
-                self.wfile.write('error/login:no_users')
+                self.wfile.write('error/login:no_users') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 return
 
             #Retrieves userhash and passhash, i.e., url:port/login/user:passhash
@@ -65,7 +65,7 @@ class handler(BaseHTTPRequestHandler):
                 dictionary_tokens = dictionary_tokens['Tokens']
             except IOError:
                 open('tokens_data', 'ab').write('')
-                self.wfile.write('error/login:no_tokens')
+                self.wfile.write('error/login:no_tokens') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 return
 
             #If login, check if user and password is valid. 
@@ -76,13 +76,13 @@ class handler(BaseHTTPRequestHandler):
                     rand = random.getrandbits(15);
                     dictionary_tokens['userhash'] = rand
 
-                    self.wfile.write('login/success:'+str(rand))
+                    self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 else:
                     #Query format error.
-                    self.wfile.write('login/failed')
+                    self.wfile.write('login/failed') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                     return
             except KeyError:
-                self.wfile.write('error/login:no_user')
+                self.wfile.write('error/login:no_user') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 
         elif operation.lower() == 'register':
             userhash = request.split('/')[1].split(':')[0]
@@ -106,9 +106,9 @@ class handler(BaseHTTPRequestHandler):
                         content.write(
                         ''',\n"%s": "%s"''' % (userhash,passhash)
                         )
-                        self.wfile.write('register/success')
+                        self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 else:
-                    self.wfile.write('error/register:userhash_in_use')
+                    self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 
             except IOError:
                 with open('userpass_data', 'ab') as content:
@@ -116,7 +116,7 @@ class handler(BaseHTTPRequestHandler):
                     '''"%s": "%s"''' % (userhash,passhash)
                     )
                 #Also send a response giving a confirmation.
-                self.wfile.write('register/success')
+                self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         elif operation.lower() == 'token':
             no_file_tokens = False
@@ -133,7 +133,7 @@ class handler(BaseHTTPRequestHandler):
 
             except IOError:
                 #if no file exists
-                self.wfile.write('error/token:no_file')
+                self.wfile.write('error/token:no_file') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 no_file_tokens = True
                 
             #token/[token]?operation:data
@@ -147,17 +147,19 @@ class handler(BaseHTTPRequestHandler):
                     token_user = dictionary_tokens[token]
                     do_operation(token_user,operation,input_data)
                 except KeyError:
-                    self.wfile.write('error/token:no_token')
+                    self.wfile.write('error/token:no_token') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             except IndexError:
-                self.wfile.write('error/token:bad_input')
+                self.wfile.write('error/token:bad_input') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 
                     
         elif operation.lower() == 'ping':
-            self.wfile.write('ping/success');
+            self.wfile.write('ping/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         
     def do_operation(user,op,input):
-        # potential operations: load, update
+        # operations:
+        # load:[field]
+        # store:[field]/[data]
         data_file = open('','r')
         data = data_file.read()
         data_file.close()
@@ -165,6 +167,13 @@ class handler(BaseHTTPRequestHandler):
  		# data = {
  		# userdata [
  		#  {userhash, weight: [value, datetime], ...}]}
+
+        # data fields:
+        # weight
+        # heartrate
+        # activities (more complicated)
+        # steps
+
         data = json.loads(data)
         data = data['userdata']
         datadict = {}
@@ -173,12 +182,19 @@ class handler(BaseHTTPRequestHandler):
         # datadict = {
         # userhash:[weight:[value,datetime],...], ...}
 
-        if op == 'load':
-            data_dump = json.dumps(datadict[user])
-            self.wfile.write('token/load:'+data_dump)
-        elif op == 'update':
+        if op.split(':')[0] == 'load':
+            field = op.split(':')[1]
+            data_dump = json.dumps(datadict[user][field])
+
+            self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+        elif op.split(':')[0].split('/')[0] == 'store':
             if user in datadict:
-                self.wfile.write('token/write')
+                data = op.split(':')[0].split('/')[1]
+
+                ## finish code here
+
+                self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         
 def run():

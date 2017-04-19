@@ -3,27 +3,11 @@ package com.example.finalproject;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class StartupActivity extends ServerActivity {
 
@@ -36,7 +20,7 @@ public class StartupActivity extends ServerActivity {
         verifyPermissions(this);
 
         Log.d("app startup","sending intent");
-        Intent intent = ServerService.serverIntent(this, "ping");
+        Intent intent = ServerService.genericServerIntent(this, "ping");
         startService(intent);
     }
 
@@ -56,7 +40,7 @@ public class StartupActivity extends ServerActivity {
     }
 
     public void ping(View v){
-        Intent intent = ServerService.serverIntent(this, "ping");
+        Intent intent = ServerService.genericServerIntent(this, "ping");
         startService(intent);
     }
 }

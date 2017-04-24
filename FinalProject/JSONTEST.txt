@@ -1,1 +1,2 @@
-{"userdata":[{"username":"keviniscool","weight":[{"value":"100","datetime":"12/24/26"}]}]}
+{"keviniscool":{"weight": [{"value": "100", "datetime": ""}, {"value": "100", "datetime": ""}, {"value": "111", "datetime": ""}], "heartrate": [{"value": "79", "datetime": ""}, {"value": "126", "datetime": ""}], "activities": [{"value": "walk", "datetime": ""}], "steps": [{"value": "12640", "datetime": ""}]},
+"seconduser":{"weight": [], "heartrate": [], "activities": [], "steps": []}}

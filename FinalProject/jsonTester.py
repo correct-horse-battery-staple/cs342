@@ -8,19 +8,29 @@ data_file.close()
 
 data = json.loads(data)
 print(data)
-data = data['userdata']
-print(data)
+print()
 datadict = {}
-for i in data:
-    #print(i)
-    datadict[i['username']]=i['weight']
-print (datadict)
-print (json.dumps(datadict['keviniscool']))
+# for i in data:
+#     ar = {}
+#     for j in i:
+#     	if j != 'userhash':
+#     		ar[j]=i[j]
+#     datadict[i['userhash']]=ar
+print(datadict)
+print()
+for i in datadict['keviniscool']:
+	print(datadict['keviniscool'][i])
+print()
+datadict['keviniscool']['weight'].append({'value':'100','datetime':''})
+datadict['keviniscool']['weight'].append({'value':'111','datetime':''})
+print(datadict)
+print()
 
-lit_eval = "{\n\t'Info':{\n\t\t'the':'the','is':'cat'\n\t}\n}"
-lit_eval = ast.literal_eval(lit_eval)
-print(lit_eval)
-lit_eval = "{'the':'the','is':'cat'}"
-lit_eval = ast.literal_eval(lit_eval)
-print(lit_eval)
-print(lit_eval['is'])
+
+dump = json.dumps(datadict)
+
+with open('JSONTEST.txt','w') as content:
+	content.write(dump)
+
+# lit_eval = ast.literal_eval(dump)
+# print(lit_eval)

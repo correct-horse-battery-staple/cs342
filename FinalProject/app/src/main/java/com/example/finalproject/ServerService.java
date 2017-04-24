@@ -37,7 +37,7 @@ public class ServerService extends IntentService {
         SharedPreferences preferences = activity.getPreferences(0);
         String token = preferences.getString("token",null);
         if(token!=null)
-            intent.putExtra("params","token/"+token+"?"+params);
+            intent.putExtra("params","token/"+token+"?load:"+params);
         return intent;
     }
 
@@ -47,7 +47,7 @@ public class ServerService extends IntentService {
         SharedPreferences preferences = activity.getPreferences(0);
         String token = preferences.getString("token",null);
         if(token!=null)
-            intent.putExtra("params","token/"+token+"?"+params+":"+data);
+            intent.putExtra("params","token/"+token+"?store:"+params+"/"+data);
         return intent;
     }
 

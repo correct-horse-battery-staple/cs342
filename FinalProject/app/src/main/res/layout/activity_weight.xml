@@ -34,10 +34,23 @@
         android:layout_below="@id/weight_PICKER"
         android:layout_alignLeft="@id/weight_TITLE"/>
 
-    <ListView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/weight_HISTORY"
+        android:orientation="vertical"
         android:layout_toLeftOf="@id/weight_SUBMIT">
-    </ListView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weight_ERROR"
+            />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weight_HISTORY"
+            >
+        </ListView>
+    </LinearLayout>
 </RelativeLayout>

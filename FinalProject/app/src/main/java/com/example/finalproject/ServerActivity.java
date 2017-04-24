@@ -71,6 +71,7 @@ public class ServerActivity extends AppCompatActivity {
 
         }
         else if(type.equals("token")){
+            setErrorMessage("token response received");
             String op = data.split(":")[0];
             if(op.equals("load")) {
                 try {

@@ -160,9 +160,13 @@ class handler(BaseHTTPRequestHandler):
         # operations:
         # load:[field]
         # store:[field]/[data]
-        data_file = open('','r')
-        data = data_file.read()
-        data_file.close()
+
+        try:
+            data_file = open('master_data','r')
+            data = data_file.read()
+            data_file.close()
+        except IOError:
+            open('master_data', 'ab').write('')
  		
  		# data = {
  		# userdata [
@@ -178,9 +182,13 @@ class handler(BaseHTTPRequestHandler):
         data = data['userdata']
         datadict = {}
         for i in data:
-        	datadict[i['userhash']]=i['weight']
+            ar = {}
+            for j in i:
+                if j != 'userhash':
+                    ar[j]=i[j]
+            datadict[i['userhash']]=ar
         # datadict = {
-        # userhash:[weight:[value,datetime],...], ...}
+        # userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
 
         if op.split(':')[0] == 'load':
             field = op.split(':')[1]

@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import android.os.Bundle;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 public class WeightActivity extends ServerActivity {
 
@@ -16,5 +17,11 @@ public class WeightActivity extends ServerActivity {
         picker.setValue(140);
 
         ServerService.getDataServerIntent(this,"weight");
+    }
+
+    @Override
+    public void setErrorMessage(String s){
+        TextView textView = (TextView)findViewById(R.id.weight_ERROR);
+        textView.setText(s);
     }
 }

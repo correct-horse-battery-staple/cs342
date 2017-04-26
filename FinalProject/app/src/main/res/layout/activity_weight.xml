@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/weight_SUBMIT"
         android:text="Submit"
+        android:onClick="submit"
         android:layout_below="@id/weight_PICKER"
         android:layout_alignLeft="@id/weight_TITLE"/>
 

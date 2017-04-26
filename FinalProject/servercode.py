@@ -9,6 +9,11 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
+
+    def do_GET(self):
+    	self.set_headers()
+        requested_name = self.raw_requestline.replace('GET ', '').split(' HTTP')[0][1:] #remove first slash
+    	self.wfile.write('<html><body><h1>%s</h1></body></html>'%requested_name)
         
     def do_POST(self):
         
@@ -192,12 +197,12 @@ class handler(BaseHTTPRequestHandler):
         elif op == 'store':
         	# [field]/[data]
 			input_data = inp.split('/')[1]
-            if user not in data:
-            	data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
-            data[user][inp].append(input_data)
+           	if user not in data:
+           		data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
+           	data[user][inp].append(input_data)
 
-            dump = json.dumps(data)
-			with open('master_data.txt','w') as content:
+           	dump = json.dumps(data)
+			with open('master_data','w') as content:
 				content.write(dump)
 
             self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

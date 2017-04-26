@@ -20,7 +20,7 @@ public class StartupActivity extends ServerActivity {
         verifyPermissions(this);
 
         Log.d("app startup","sending intent");
-        Intent intent = ServerService.genericServerIntent(this, "ping");
+        Intent intent = ServerService.ServerIntent(this, "ping");
         startService(intent);
     }
 
@@ -40,7 +40,7 @@ public class StartupActivity extends ServerActivity {
     }
 
     public void ping(View v){
-        Intent intent = ServerService.genericServerIntent(this, "ping");
+        Intent intent = ServerService.ServerIntent(this, "ping");
         startService(intent);
     }
 }

@@ -29,7 +29,7 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
         String passhash = pass.getText().toString().hashCode()+"";
 
         if(userhash.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.genericServerIntent(this,"login/"+userhash+":"+passhash);
+            Intent intent = ServerService.ServerIntent(this,"login/"+userhash+":"+passhash);
             startService(intent);
         }
         else{
@@ -45,7 +45,7 @@ public class LoginActivity extends ServerActivity implements LoginFragment.OnFra
         String passhash = pass.getText().toString().hashCode()+"";
 
         if(userhash.length()>0&&passhash.length()>0){
-            Intent intent = ServerService.genericServerIntent(this,"register/"+userhash+":"+passhash);
+            Intent intent = ServerService.ServerIntent(this,"register/"+userhash+":"+passhash);
             startService(intent);
         }
         else{

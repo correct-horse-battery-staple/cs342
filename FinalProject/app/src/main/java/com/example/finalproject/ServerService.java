@@ -24,30 +24,10 @@ public class ServerService extends IntentService {
         super("ServerService");
     }
 
-    public static Intent genericServerIntent(Activity activity, String params){
+    public static Intent ServerIntent(Activity activity, String params){
         Intent intent = new Intent(activity, ServerService.class);
         intent.setAction("access");
         intent.putExtra("params",params);
-        return intent;
-    }
-
-    public static Intent getDataServerIntent(Activity activity, String params){
-        Intent intent = new Intent(activity,ServerService.class);
-        intent.setAction("access");
-        SharedPreferences preferences = activity.getPreferences(0);
-        String token = preferences.getString("token",null);
-        if(token!=null)
-            intent.putExtra("params","token/"+token+"?load:"+params);
-        return intent;
-    }
-
-    public static Intent putDataServerIntent(Activity activity, String params, String data){
-        Intent intent = new Intent(activity,ServerService.class);
-        intent.setAction("access");
-        SharedPreferences preferences = activity.getPreferences(0);
-        String token = preferences.getString("token",null);
-        if(token!=null)
-            intent.putExtra("params","token/"+token+"?store:"+params+"/"+data);
         return intent;
     }
 

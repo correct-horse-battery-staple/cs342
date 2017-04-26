@@ -156,17 +156,18 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write('ping/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         
-    def do_operation(user,op,input):
+    def do_operation(user,op,inp):
         # operations:
-        # load:[field]
-        # store:[field]/[data]
+        # load
+        # store
 
         try:
             data_file = open('master_data','r')
             data = data_file.read()
             data_file.close()
         except IOError:
-            open('master_data', 'ab').write('')
+            open('master_data', 'ab').write('{}')
+            data=json.loads('{}')
  		
  		# data = {
  		# userdata [
@@ -179,30 +180,27 @@ class handler(BaseHTTPRequestHandler):
         # steps
 
         data = json.loads(data)
-        data = data['userdata']
-        datadict = {}
-        for i in data:
-            ar = {}
-            for j in i:
-                if j != 'userhash':
-                    ar[j]=i[j]
-            datadict[i['userhash']]=ar
-        # datadict = {
+        # data = {
         # userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
 
-        if op.split(':')[0] == 'load':
-            field = op.split(':')[1]
-            data_dump = json.dumps(datadict[user][field])
+        if op == 'load':
+            try:
+            	data_dump = json.dumps(data[user][inp])
+            	self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            except KeyError:
+            	self.wfile.write('error/token:no_data') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        elif op == 'store':
+        	# [field]/[data]
+			input_data = inp.split('/')[1]
+            if user not in data:
+            	data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
+            data[user][inp].append(input_data)
 
-            self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            dump = json.dumps(data)
+			with open('master_data.txt','w') as content:
+				content.write(dump)
 
-        elif op.split(':')[0].split('/')[0] == 'store':
-            if user in datadict:
-                data = op.split(':')[0].split('/')[1]
-
-                ## finish code here
-
-                self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         
 def run():

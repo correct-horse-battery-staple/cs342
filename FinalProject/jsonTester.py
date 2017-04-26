@@ -9,25 +9,27 @@ data_file.close()
 data = json.loads(data)
 print(data)
 print()
-datadict = {}
+# datadict = {}
 # for i in data:
 #     ar = {}
 #     for j in i:
 #     	if j != 'userhash':
 #     		ar[j]=i[j]
 #     datadict[i['userhash']]=ar
-print(datadict)
+# print(datadict)
+# print()
+for j in data:
+	print(j)
+	for i in data[j]:
+		print(i+' '+str(data[j][i]))
 print()
-for i in datadict['keviniscool']:
-	print(datadict['keviniscool'][i])
-print()
-datadict['keviniscool']['weight'].append({'value':'100','datetime':''})
-datadict['keviniscool']['weight'].append({'value':'111','datetime':''})
-print(datadict)
+data['keviniscool']['weight'].append({'value':'100','datetime':''})
+data['keviniscool']['weight'].append({'value':'111','datetime':''})
+print(data)
 print()
 
 
-dump = json.dumps(datadict)
+dump = json.dumps(data)
 
 with open('JSONTEST.txt','w') as content:
 	content.write(dump)

@@ -136,7 +136,7 @@ public class ServerActivity extends AppCompatActivity {
         String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         SharedPreferences preferences = getSharedPreferences("tokens", Context.MODE_PRIVATE);
         String token = preferences.getString("token",null);
-        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"{'value'='"+value+"','datetime'='"+datetime+"'}");
+        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"/{'value'='"+value+"','datetime'='"+datetime+"'}");
         startService(i);
     }
 }

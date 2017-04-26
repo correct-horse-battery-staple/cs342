@@ -17,11 +17,11 @@ class handler(BaseHTTPRequestHandler):
         
     def do_POST(self):
         
-        # List of operations:
-        # login/user:passhash
-        # register/user:passhash
-        # token/[token]?operation:[field]/data
-        # ping
+        #List of operations:
+        #login/user:passhash
+        #register/user:passhash
+        #token/[token]?operation:[field]/data
+        #ping
         
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
@@ -77,9 +77,11 @@ class handler(BaseHTTPRequestHandler):
             try:
                 stored_passhash = dictionary_userpass[userhash]
                 if stored_passhash == passhash:
-                    ###    ISSUE TOKEN
                     rand = random.getrandbits(15);
                     dictionary_tokens['userhash'] = rand
+                    dump = json.dumps(dictionary_tokens)
+                    with open('tokens_data','w') as content:
+                    	content.write(dump)
 
                     self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 else:
@@ -133,7 +135,7 @@ class handler(BaseHTTPRequestHandler):
                 dictionary_tokens = "{\n\t'Tokens': {\n"
                 dictionary_tokens += '\t\t\n'.join(data.lower().splitlines())
                 dictionary_tokens += '\n\t}\n}'
-                dictionary_tokens = ast.literal_eval(dictionary_userpass)
+                dictionary_tokens = ast.literal_eval(dictionary_tokens)
                 dictionary_tokens = dictionary_tokens['Tokens']
 
             except IOError:
@@ -145,7 +147,7 @@ class handler(BaseHTTPRequestHandler):
             post_slash = request.split('/')[1]
             token = post_slash.split('?')[0]
             try:
-                post_q = post_slash.split('?'[1])
+                post_q = post_slash.split('?')[1]
                 operation = post_q.split(':')[0]
                 input_data = post_q.split(':')[1]
                 try:
@@ -162,9 +164,9 @@ class handler(BaseHTTPRequestHandler):
         return
         
     def do_operation(user,op,inp):
-        # operations:
-        # load
-        # store
+        #operations:
+        #load
+        #store
 
         try:
             data_file = open('master_data','r')
@@ -173,20 +175,19 @@ class handler(BaseHTTPRequestHandler):
         except IOError:
             open('master_data', 'ab').write('{}')
             data=json.loads('{}')
- 		
- 		# data = {
- 		# userdata [
- 		#  {userhash, weight: [value, datetime], ...}]}
+        #data = {
+        #userdata [
+        #{userhash, weight: [value, datetime], ...}]}
 
-        # data fields:
-        # weight
-        # heartrate
-        # activities (more complicated)
-        # steps
+        #data fields:
+        #weight
+        #heartrate
+        #activities (more complicated)
+        #steps
 
         data = json.loads(data)
-        # data = {
-        # userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
+        #data = {
+        #userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
 
         if op == 'load':
             try:
@@ -195,16 +196,14 @@ class handler(BaseHTTPRequestHandler):
             except KeyError:
             	self.wfile.write('error/token:no_data') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         elif op == 'store':
-        	# [field]/[data]
-			input_data = inp.split('/')[1]
-           	if user not in data:
-           		data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
-           	data[user][inp].append(input_data)
-
-           	dump = json.dumps(data)
-			with open('master_data','w') as content:
-				content.write(dump)
-
+            #[field]/[data]
+            input_data = inp.split('/')[1]
+            if user not in data:
+                data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
+            data[user][inp].append(input_data)
+            dump = json.dumps(data)
+            with open('master_data','w') as content:
+            	content.write(dump)
             self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         

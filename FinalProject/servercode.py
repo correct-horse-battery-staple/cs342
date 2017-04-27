@@ -44,7 +44,7 @@ class handler(BaseHTTPRequestHandler):
                 data = userpass_file.read()
                 userpass_file.close()
                 # {'userpass': [{'userhash':'0','userpass':'0'},...] }
-                dictionary_userpass = json.loads(data)
+                dictionary_userpass = ast.literal_eval(data)
             except IOError:
                 #if no file exists
                 open('userpass_data', 'ab').write("{'userpass':{}}")
@@ -60,7 +60,7 @@ class handler(BaseHTTPRequestHandler):
                 data = tokens_file.read()
                 tokens_file.close()
     
-                dictionary_tokens = json.loads(data)
+                dictionary_tokens = ast.literal_eval(data)
             except IOError:
                 open('tokens_data', 'ab').write('')
                 self.wfile.write('error/login:no_tokens') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -72,7 +72,7 @@ class handler(BaseHTTPRequestHandler):
                 if stored_passhash == passhash:
                     rand = random.getrandbits(15);
                     prev_token = dictionary_tokens['users'][userhash]
-                    dictionary_tokens['tokens'].remove(prev_token)
+                    dictionary_tokens['tokens'].pop(prev_token)
                     dictionary_tokens['tokens'][rand] = userhash
                     dictionary_tokens['users'][userhash]=rand
                     dump = json.dumps(dictionary_tokens)
@@ -102,7 +102,7 @@ class handler(BaseHTTPRequestHandler):
                 # dictionary_userpass = "{\n\t'Info': {\n"
                 # dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
                 # dictionary_userpass += '\n\t}\n}'
-                dictionary_userpass = json.loads(data)
+                dictionary_userpass = ast.literal_eval(data)
                 # dictionary_userpass = dictionary_userpass['Info']
 
                 if userhash not in dictionary_userpass['userpass']:
@@ -128,12 +128,8 @@ class handler(BaseHTTPRequestHandler):
                 tokens_file = open('tokens_data', 'r')
                 data = tokens_file.read()
                 tokens_file.close()
-    
-                # dictionary_tokens = "{\n\t'Tokens': {\n"
-                # dictionary_tokens += '\t\t\n'.join(data.lower().splitlines())
-                # dictionary_tokens += '\n\t}\n}'
-                dictionary_tokens = json.loads(data)
-                # dictionary_tokens = dictionary_tokens['Tokens']
+
+                dictionary_tokens = ast.literal_eval(data)
 
             except IOError:
                 #if no file exists
@@ -182,7 +178,7 @@ class handler(BaseHTTPRequestHandler):
         #activities (more complicated)
         #steps
 
-        data = json.loads(data)
+        data = ast.literal_eval(data)
         #data = {
         #userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
 

@@ -11,9 +11,9 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-    	self.set_headers()
+        self.set_headers()
         requested_name = self.raw_requestline.replace('GET ', '').split(' HTTP')[0][1:] #remove first slash
-    	self.wfile.write('<html><body><h1>%s</h1></body></html>'%requested_name)
+        self.wfile.write('<html><body><h1>%s</h1></body></html>'%requested_name)
         
     def do_POST(self):
         
@@ -43,11 +43,11 @@ class handler(BaseHTTPRequestHandler):
                 userpass_file = open('userpass_data', 'r')
                 data = userpass_file.read()
                 userpass_file.close()
-                # {'userpass': [{'userhash':'0','userpass':'0'},...] }
+                # {'userpass': {'0':'0',...} }
                 dictionary_userpass = ast.literal_eval(data)
-            except IOError:
                 #if no file exists
-                open('userpass_data', 'ab').write("{'userpass':{}}")
+            except IOError:
+                open('userpass_data', 'w').write("{'userpass':{}}")
                 self.wfile.write('error/login:no_users') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 return
 
@@ -62,7 +62,7 @@ class handler(BaseHTTPRequestHandler):
     
                 dictionary_tokens = ast.literal_eval(data)
             except IOError:
-                open('tokens_data', 'ab').write('')
+                open('tokens_data', 'w').write('')
                 self.wfile.write('error/login:no_tokens') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 return
 
@@ -71,13 +71,14 @@ class handler(BaseHTTPRequestHandler):
                 stored_passhash = dictionary_userpass['userpass'][userhash]
                 if stored_passhash == passhash:
                     rand = random.getrandbits(15);
-                    prev_token = dictionary_tokens['users'][userhash]
-                    dictionary_tokens['tokens'].pop(prev_token)
+                    if userhash in dictionary_tokens['users']:
+                        prev_token = dictionary_tokens['users'][userhash]
+                        dictionary_tokens['tokens'].pop(prev_token)
                     dictionary_tokens['tokens'][rand] = userhash
                     dictionary_tokens['users'][userhash]=rand
-                    dump = json.dumps(dictionary_tokens)
                     with open('tokens_data','w') as content:
                         content.write(dump)
+                    dump = json.dumps(dictionary_tokens)
 
                     self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 else:
@@ -106,18 +107,18 @@ class handler(BaseHTTPRequestHandler):
                 # dictionary_userpass = dictionary_userpass['Info']
 
                 if userhash not in dictionary_userpass['userpass']:
-                    with open('userpass_data', 'ab') as content:
-                        content.write(
-                        ''',\n"%s": "%s"''' % (userhash,passhash)
-                        )
+                    dictionary_userpass['userpass'][userhash]=passhash
+                    dump = json.dumps(dictionary_userpass)
+                    with open('userpass_data', 'w') as content:
+                        content.write(dump)
                         self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 else:
                     self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 
             except IOError:
-                with open('userpass_data', 'ab') as content:
+                with open('userpass_data', 'w') as content:
                     content.write(
-                    '''"%s": "%s"''' % (userhash,passhash)
+                    '''{"userpass":{}}''' % (userhash,passhash)
                     )
                 #Also send a response giving a confirmation.
                 self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -184,10 +185,10 @@ class handler(BaseHTTPRequestHandler):
 
         if op == 'load':
             try:
-            	data_dump = json.dumps(data[user][inp])
-            	self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+                data_dump = json.dumps(data[user][inp])
+                self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             except KeyError:
-            	self.wfile.write('error/token:no_data') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+                self.wfile.write('error/token:no_data') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         elif op == 'store':
             #[field]/[data]
             input_data = inp.split('/')[1]
@@ -196,7 +197,7 @@ class handler(BaseHTTPRequestHandler):
             data[user][inp].append(input_data)
             dump = json.dumps(data)
             with open('master_data','w') as content:
-            	content.write(dump)
+                content.write(dump)
             self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         

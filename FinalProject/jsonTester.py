@@ -44,3 +44,13 @@ print(data)
 
 #print(data)
 print(data['userpass']['0'])
+data['userpass'].pop('0')
+print(data)
+token = '23'
+rand = '132'
+if token in data['userpass']:
+    prev_token = data['userpass'][token]
+    data['tokens'].pop(prev_token)
+data['tokens'][rand] = token
+data['userpass'][token] = rand
+print(data)

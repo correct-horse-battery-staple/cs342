@@ -74,11 +74,11 @@ class handler(BaseHTTPRequestHandler):
 
             if stored_passhash == passhash:
                 rand = random.getrandbits(15);
-                if userhash in dictionary_tokens['users']: #error somewhere in this block of code
+                if userhash in dictionary_tokens['users']:
                     prev_token = dictionary_tokens['users'][userhash]
                     dictionary_tokens['users'][userhash] = str(rand)
                     try:
-                        dictionary_tokens['tokens'].pop(prev_token) # to here
+                        dictionary_tokens['tokens'].pop(prev_token)
                         dictionary_tokens['tokens'][str(rand)] = userhash
                     except KeyError:
                         self.wfile.write('error/login:token_error_1')
@@ -146,16 +146,17 @@ class handler(BaseHTTPRequestHandler):
                 
             #token/[token]?operation:data
             post_slash = '-'.join(request.split('/')[1:])
-            token = post_slash.split('?')[0]
+            token = post_slash.split('?')[0][:-1]
             try:
                 post_q = post_slash.split('?')[1]
                 operation = post_q.split(':')[0]
                 input_data = ':'.join(post_q.split(':')[1:])
-                if str(token) in dictionary_tokens['tokens'] or token in dictionary_tokens['tokens']:
-                    token_user = dictionary_tokens['tokens'][str(token)]
+                # if token in dictionary_tokens["tokens"]: #if block is never true
+                try:
+                    token_user = dictionary_tokens['tokens'][token]
                     do_operation(token_user,operation,input_data)
-                else:
-                    self.wfile.write('error/token:%s'% str(dictionary_tokens['tokens'])) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+                except KeyError:
+                    self.wfile.write('error/token:%d %s'% (' '.join(list(token)), dictionary_tokens['tokens'])) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             except IndexError:
                 self.wfile.write('error/token:bad_input') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
                 

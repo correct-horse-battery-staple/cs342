@@ -34,23 +34,27 @@ import json, ast
 # with open('JSONTEST.txt','w') as content:
 # 	content.write(dump)
 
-data_file = open('JSONTEST2.txt','r')
-data = data_file.read()
-data_file.close()
+# data_file = open('JSONTEST2.txt','r')
+# data = data_file.read()
+# data_file.close()
 
-data = ast.literal_eval(data)
-print(data)
-#data = json.loads(data)
+# data = ast.literal_eval(data)
+# print(data)
+# #data = json.loads(data)
 
-#print(data)
-print(data['userpass']['0'])
-data['userpass'].pop('0')
-print(data)
-token = '23'
-rand = '132'
-if token in data['userpass']:
-    prev_token = data['userpass'][token]
-    data['tokens'].pop(prev_token)
-data['tokens'][rand] = token
-data['userpass'][token] = rand
-print(data)
+# #print(data)
+# user = '0'
+# rand = '132'
+# if user in data['userpass']:
+# 	prev_token = data['userpass'][user]
+# 	data['tokens'].pop(prev_token)
+# data['tokens'][rand] = user
+# data['userpass'][user] = rand
+# print(data)
+# print (rand in data['tokens'])
+# print (user in data['userpass'])
+
+print ('170'==170)
+print ('170'=='170')
+print (170 == 170)
+print (str(170)=='170')

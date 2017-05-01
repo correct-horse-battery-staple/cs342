@@ -81,7 +81,7 @@ public class ServerService extends IntentService {
                     }
                     rd.close();
 
-                    int code = connection.getResponseCode();
+                    //int code = connection.getResponseCode();
                     //Log.d("server code",""+code);
                     //if(code!=202)
                     //    Log.d("server code","error");

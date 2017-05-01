@@ -82,7 +82,7 @@ public class ServerActivity extends AppCompatActivity {
     }
     private void error(String data){
         String op = data.split(":")[0];
-        String error = data.split(":")[1];
+        String error = data.substring(op.length()+1);//split(":")[1];
         error.replaceAll("_"," ");
         error = error.substring(0,1).toUpperCase() + error.substring(1);
         Log.d("error",op+" "+error);
@@ -136,7 +136,7 @@ public class ServerActivity extends AppCompatActivity {
         String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         SharedPreferences preferences = getSharedPreferences("tokens", Context.MODE_PRIVATE);
         String token = preferences.getString("token",null);
-        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"/{'value'='"+value+"','datetime'='"+datetime+"'}");
+        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"/{'value':'"+value+"','datetime':'"+datetime+"'}");
         startService(i);
     }
 }

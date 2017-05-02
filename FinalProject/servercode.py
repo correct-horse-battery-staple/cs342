@@ -24,148 +24,150 @@ class handler(BaseHTTPRequestHandler):
         #ping
         
         length = int(self.headers.getheader('content-length'))
-        field_data = self.rfile.read(length)
-        
+        request = self.rfile.read(length)
         self.set_headers()
 
-        request = field_data
         try:
-            #Retrieves first parameter, i.e., url:port/login
             operation = request.split('/')[0]
-            
         except IndexError:
             self.wfile.write('error/input:invalid_operation') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             return
         
         if operation.lower() == 'login':
-            no_file_userpass = False
-            try: 
-                userpass_file = open('userpass_data', 'r')
-                data = userpass_file.read()
-                userpass_file.close()
-                # {'userpass': {'0':'0',...} }
-                dictionary_userpass = ast.literal_eval(data)
-                #if no file exists
-            except IOError:
-                open('userpass_data', 'w').write("{'userpass':{}}")
-                self.wfile.write('error/login:no_users') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                return
-
-            #Retrieves userhash and passhash, i.e., url:port/login/user:passhash
-            userhash = request.split('/')[1].split(':')[0]
-            passhash = request.split('/')[1].split(':')[1]
-
-            try:
-                tokens_file = open('tokens_data', 'r')
-                data = tokens_file.read()
-                tokens_file.close()
-    
-                dictionary_tokens = ast.literal_eval(data)
-            except IOError:
-                open('tokens_data', 'w').write('{"tokens":{},"users":{}}')
-                return
-
-            #If login, check if user and password is valid. 
-            stored_passhash = ''
-            try:
-                stored_passhash = dictionary_userpass['userpass'][userhash]
-            except KeyError:
-                self.wfile.write('error/login:no_user')
-
-            if stored_passhash == passhash:
-                rand = random.getrandbits(15);
-                if userhash in dictionary_tokens['users']:
-                    prev_token = dictionary_tokens['users'][userhash]
-                    dictionary_tokens['users'][userhash] = str(rand)
-                    try:
-                        dictionary_tokens['tokens'].pop(prev_token)
-                        dictionary_tokens['tokens'][str(rand)] = userhash
-                    except KeyError:
-                        self.wfile.write('error/login:token_error_1')
-                        return
-                    self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                else:
-                    dictionary_tokens['users'][userhash]=str(rand)
-                    dictionary_tokens['tokens'][str(rand)] = userhash
-                    self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                dump = json.dumps(dictionary_tokens)
-                with open('tokens_data','w') as content:
-                    content.write(dump)
-            else:
-                self.wfile.write('login/failed') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                return
-
+            self.login(request)
                 
         elif operation.lower() == 'register':
-            userhash = request.split('/')[1].split(':')[0]
-            passhash = request.split('/')[1].split(':')[1]
-            
-            no_file_userpass = False
-            try: 
-                userpass_file = open('userpass_data', 'r')
-                data = userpass_file.read()
-                userpass_file.close()
-
-                # following code maintained here for documentation purposes
-
-                # dictionary_userpass = "{\n\t'Info': {\n"
-                # dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
-                # dictionary_userpass += '\n\t}\n}'
-                dictionary_userpass = ast.literal_eval(data)
-                # dictionary_userpass = dictionary_userpass['Info']
-
-                if userhash not in dictionary_userpass['userpass']:
-                    dictionary_userpass['userpass'][userhash]=passhash
-                    dump = json.dumps(dictionary_userpass)
-                    with open('userpass_data', 'w') as content:
-                        content.write(dump)
-                        self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                else:
-                    self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                
-            except IOError:
-                with open('userpass_data', 'w') as content:
-                    content.write(
-                    '''{"userpass":{"%s","%s"}}''' % (userhash,passhash)
-                    )
-                #Also send a response giving a confirmation.
-                self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            self.register(request)
 
         elif operation.lower() == 'token':
-            try: 
-                tokens_file = open('tokens_data', 'r')
-                data = tokens_file.read()
-                tokens_file.close()
-
-                dictionary_tokens = ast.literal_eval(data)
-
-            except IOError:
-                #if no file exists
-                with open('tokens_data','w') as content:
-                	content.write('''{"tokens":{},"users":{}}''')
-                
-            #token/[token]?operation:data
-            post_slash = '-'.join(request.split('/')[1:])
-            token = post_slash.split('?')[0][:-1]
-            try:
-                post_q = post_slash.split('?')[1]
-                operation = post_q.split(':')[0]
-                input_data = ':'.join(post_q.split(':')[1:])
-                # if token in dictionary_tokens["tokens"]: #if block is never true
-                try:
-                    token_user = dictionary_tokens['tokens'][token]
-                    do_operation(token_user,operation,input_data)
-                except KeyError:
-                    self.wfile.write('error/token:%d %s'% (' '.join(list(token)), dictionary_tokens['tokens'])) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-            except IndexError:
-                self.wfile.write('error/token:bad_input') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-                
+            self.token(request)
                     
         elif operation.lower() == 'ping':
             self.wfile.write('ping/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
+
+    def login(self,request):
+        try: 
+            userpass_file = open('userpass_data', 'r')
+            data = userpass_file.read()
+            userpass_file.close()
+            # {'userpass': {'0':'0',...} }
+            dictionary_userpass = ast.literal_eval(data)
+            #if no file exists
+        except IOError:
+            open('userpass_data', 'w').write("{'userpass':{}}")
+            self.wfile.write('error/login:no_users') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            return
+
+        # login/user:passhash
+        userhash = request.split('/')[1].split(':')[0]
+        passhash = request.split('/')[1].split(':')[1]
+
+        try:
+            tokens_file = open('tokens_data', 'r')
+            data = tokens_file.read()
+            tokens_file.close()
+
+            dictionary_tokens = ast.literal_eval(data)
+        except IOError:
+            open('tokens_data', 'w').write('{"tokens":{},"users":{}}')
+            return
+
+        #If login, check if user and password is valid. 
+        stored_passhash = ''
+        try:
+            stored_passhash = dictionary_userpass['userpass'][userhash]
+        except KeyError:
+            self.wfile.write('error/login:no_user')
+
+        if stored_passhash == passhash:
+            rand = random.getrandbits(15);
+            if userhash in dictionary_tokens['users']:
+                prev_token = dictionary_tokens['users'][userhash]
+                dictionary_tokens['users'][userhash] = str(rand)
+                try:
+                    dictionary_tokens['tokens'].pop(prev_token)
+                    dictionary_tokens['tokens'][str(rand)] = userhash
+                except KeyError:
+                    self.wfile.write('error/login:token_error_1')
+                    return
+                self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            else:
+                dictionary_tokens['users'][userhash]=str(rand)
+                dictionary_tokens['tokens'][str(rand)] = userhash
+                self.wfile.write('login/success:'+str(rand)) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            dump = json.dumps(dictionary_tokens)
+            with open('tokens_data','w') as content:
+                content.write(dump)
+        else:
+            self.wfile.write('login/failed') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            return
+
+    def register(self,request):
+    	userhash = request.split('/')[1].split(':')[0]
+        passhash = request.split('/')[1].split(':')[1]
         
-    def do_operation(user,op,inp):
+        no_file_userpass = False
+        try: 
+            userpass_file = open('userpass_data', 'r')
+            data = userpass_file.read()
+            userpass_file.close()
+
+            # following code maintained here for documentation purposes
+
+            # dictionary_userpass = "{\n\t'Info': {\n"
+            # dictionary_userpass += '\t\t\n'.join(data.lower().splitlines())
+            # dictionary_userpass += '\n\t}\n}'
+            dictionary_userpass = ast.literal_eval(data)
+            # dictionary_userpass = dictionary_userpass['Info']
+
+            if userhash not in dictionary_userpass['userpass']:
+                dictionary_userpass['userpass'][userhash]=passhash
+                dump = json.dumps(dictionary_userpass)
+                with open('userpass_data', 'w') as content:
+                    content.write(dump)
+                    self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            else:
+                self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            
+        except IOError:
+            with open('userpass_data', 'w') as content:
+                content.write(
+                '''{"userpass":{"%s","%s"}}''' % (userhash,passhash)
+                )
+            #Also send a response giving a confirmation.
+            self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        self.login(request)
+
+    def token(self,request):
+    	try: 
+            tokens_file = open('tokens_data', 'r')
+            data = tokens_file.read()
+            tokens_file.close()
+
+            dictionary_tokens = ast.literal_eval(data)
+
+        except IOError:
+            #if no file exists
+            with open('tokens_data','w') as content:
+            	content.write('''{"tokens":{},"users":{}}''')
+            
+        #token/[token]?operation:data
+        post_slash = '-'.join(request.split('/')[1:])
+        token = post_slash.split('?')[0][:-1]
+        try:
+            post_q = post_slash.split('?')[1]
+            operation = post_q.split(':')[0]
+            input_data = ':'.join(post_q.split(':')[1:])
+            try:
+                token_user = dictionary_tokens['tokens'][token]
+                self.do_operation(token_user,operation,input_data)
+            except KeyError:
+                self.wfile.write('error/token:%d %s'% (' '.join(list(token)), dictionary_tokens['tokens'])) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        except IndexError:
+            self.wfile.write('error/token:bad_input') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+    def do_operation(self,user,op,inp):
         #operations:
         #load
         #store
@@ -192,6 +194,7 @@ class handler(BaseHTTPRequestHandler):
         #userhash:{weight:[{value,datetime},{}...],heartrate:[]...}...}
 
         if op == 'load':
+        	#[field]
             try:
                 data_dump = json.dumps(data[user][inp])
                 self.wfile.write('token/load:'+data_dump) #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -203,11 +206,11 @@ class handler(BaseHTTPRequestHandler):
             input_data = inp.split('-')[1]
             if user not in data:
                 data[user]={'weight': [], 'heartrate': [], 'activities': [], 'steps': []}
-            data[user][input_field].append(input_data)
+            data[user][input_field].append(ast.literal_eval(input_data))
             dump = json.dumps(data)
             with open('master_data','w') as content:
                 content.write(dump)
-            self.wfile.write('token/write') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            self.wfile.write('token/store/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         return
         
 def run():

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by panda_000 on 3/27/2017.
@@ -73,14 +74,14 @@ public class ServerActivity extends AppCompatActivity {
         }
     }
 
-    private void ping(String data){
+    public void ping(String data){
         //Log.d("app receiveServer ping", getClass().toString());
         if(getClass().isInstance(new StartupActivity())) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
         }
     }
-    private void error(String data){
+    public void error(String data){
         String op = data.split(":")[0];
         String error = data.substring(op.length()+1);//split(":")[1];
         error.replaceAll("_"," ");
@@ -88,7 +89,7 @@ public class ServerActivity extends AppCompatActivity {
         Log.d("error",op+" "+error);
         setErrorMessage(error);
     }
-    private void login(String data){
+    public void login(String data){
         if(data.split(":")[0].equals("success")){
             String token = data.split(":")[1];
 
@@ -102,22 +103,29 @@ public class ServerActivity extends AppCompatActivity {
             startActivity(homeIntent);
         }
     }
-    private void register(String data){
 
+    public void register(String data){
+        
     }
-    private void token(String data){
+
+    public void token(String data){
         setErrorMessage("token response received");
         String op = data.split(":")[0];
         if(op.equals("load")) {
             try {
-                JSONObject json = new JSONObject(data.split(":")[1]);
+                JSONArray jsonArray = new JSONArray(data.substring(op.length()+1));
+                for (int i =0;i<jsonArray.length();i++){
+
+                }
+                setErrorMessage(data);
+                Log.d("server load",data.substring(op.length()+1));
             }
             catch(JSONException i) {
                 i.printStackTrace();
             }
         }
         else if(op.equals("store")){
-
+            setErrorMessage(data);
         }
     }
 

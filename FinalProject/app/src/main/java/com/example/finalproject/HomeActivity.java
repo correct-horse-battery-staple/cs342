@@ -25,7 +25,7 @@ public class HomeActivity extends ServerActivity {
     BarGraphSeries<DataPoint> weight;
     BarGraphSeries<DataPoint> heartrate;
     BarGraphSeries<DataPoint> steps;
-    
+
     @Override
     protected void onStart(){
         super.onStart();

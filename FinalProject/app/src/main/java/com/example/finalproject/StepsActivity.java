@@ -55,7 +55,6 @@ public class StepsActivity extends ServerActivity implements SensorEventListener
             steps = String.valueOf(event.values[0]);
             count.setText(String.valueOf(event.values[0]));
         }
-
     }
 
     @Override

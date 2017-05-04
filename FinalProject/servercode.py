@@ -127,16 +127,16 @@ class handler(BaseHTTPRequestHandler):
                 with open('userpass_data', 'w') as content:
                     content.write(dump)
                     self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-            else:
-                self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            # else:
+            #     self.wfile.write('error/register:userhash_in_use') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             
         except IOError:
             with open('userpass_data', 'w') as content:
                 content.write(
                 '''{"userpass":{"%s","%s"}}''' % (userhash,passhash)
                 )
-            #Also send a response giving a confirmation.
-            self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+            # Also send a response giving a confirmation.
+            # self.wfile.write('register/success') #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         self.login(request)
 
     def token(self,request):

@@ -74,14 +74,14 @@ public class ServerActivity extends AppCompatActivity {
         }
     }
 
-    public void ping(String data){
+    protected void ping(String data){
         //Log.d("app receiveServer ping", getClass().toString());
         if(getClass().isInstance(new StartupActivity())) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
         }
     }
-    public void error(String data){
+    protected void error(String data){
         String op = data.split(":")[0];
         String error = data.substring(op.length()+1);//split(":")[1];
         error.replaceAll("_"," ");
@@ -89,7 +89,7 @@ public class ServerActivity extends AppCompatActivity {
         Log.d("error",op+" "+error);
         setErrorMessage(error);
     }
-    public void login(String data){
+    protected void login(String data){
         if(data.split(":")[0].equals("success")){
             String token = data.split(":")[1];
 
@@ -104,18 +104,18 @@ public class ServerActivity extends AppCompatActivity {
         }
     }
 
-    public void register(String data){
-        
+    protected void register(String data){
+        // probably will never be reached with the way the code is currently implemented
     }
 
-    public void token(String data){
+    protected void token(String data){
         setErrorMessage("token response received");
         String op = data.split(":")[0];
         if(op.equals("load")) {
             try {
                 JSONArray jsonArray = new JSONArray(data.substring(op.length()+1));
                 for (int i =0;i<jsonArray.length();i++){
-
+                    Log.d("app json",jsonArray.get(i).toString());
                 }
                 setErrorMessage(data);
                 Log.d("server load",data.substring(op.length()+1));
@@ -129,7 +129,7 @@ public class ServerActivity extends AppCompatActivity {
         }
     }
 
-    public void setErrorMessage(String s){
+    protected void setErrorMessage(String s){
         return;
     }
 
@@ -144,7 +144,7 @@ public class ServerActivity extends AppCompatActivity {
         String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         SharedPreferences preferences = getSharedPreferences("tokens", Context.MODE_PRIVATE);
         String token = preferences.getString("token",null);
-        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"/{'value':'"+value+"','datetime':'"+datetime+"'}");
+        Intent i = ServerService.ServerIntent(this,"token/"+token+"?store:"+type+"/{"+value+",'datetime':'"+datetime+"'}");
         startService(i);
     }
 }

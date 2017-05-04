@@ -1,15 +1,19 @@
 
 package com.example.finalproject;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,12 +84,17 @@ public class HeartrateActivity extends ServerActivity {
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
         prepareCountDownTimer();
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS},0);
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
     }
-
-
-
-
     /**
      * {@inheritDoc}
      */
@@ -101,7 +110,13 @@ public class HeartrateActivity extends ServerActivity {
     public void onResume() {
         super.onResume();
         wakeLock.acquire();
-        camera = Camera.open();
+        try {
+            camera = Camera.open(0);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Log.e("camera error","camera failed to open");
+        }
         startTime = System.currentTimeMillis();
     }
 

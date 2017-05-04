@@ -40,7 +40,7 @@ public class StepFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.stepsButton){
-            startActivity(new Intent(getActivity(),StepActivity.class));
+            startActivity(new Intent(getActivity(),StepsActivity.class));
         }
 
     }

@@ -1,9 +1,13 @@
 package com.example.finalproject;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.jjoe64.graphview.GraphView;
@@ -21,6 +25,19 @@ public class HomeActivity extends ServerActivity {
     BarGraphSeries<DataPoint> weight;
     BarGraphSeries<DataPoint> heartrate;
     BarGraphSeries<DataPoint> steps;
+    
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},0);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

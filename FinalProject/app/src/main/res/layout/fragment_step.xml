@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.thyne_000.healthapp.StepFragment">
+
+    <LinearLayout
+        android:id="@+id/top"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:weightSum="1.0"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <Button
+            android:id="@+id/stepsButton"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="Start Recording or View Current Steps"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/top"
+        android:orientation="horizontal"
+        android:layout_height="500dp">
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="fill_parent"
+            android:id="@+id/graph"
+            android:layout_height="fill_parent" />
+    </RelativeLayout>
+
+</RelativeLayout>
+

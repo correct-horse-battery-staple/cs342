@@ -83,18 +83,8 @@ public class HeartrateActivity extends ServerActivity {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
         prepareCountDownTimer();
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CONTACTS},0);
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-        }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -115,7 +105,7 @@ public class HeartrateActivity extends ServerActivity {
         }
         catch(Exception e){
             e.printStackTrace();
-            Log.e("camera error","camera failed to open");
+            Log.e("camera error","camera failed to open 2");
         }
         startTime = System.currentTimeMillis();
     }
